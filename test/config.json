@@ -1,0 +1,8 @@
+{
+  "timeout": 400,
+  "exBool": true,
+  "exString": "foobar",
+  "webUrlObj": {
+    "host": "127.0.0.1"
+  }
+}
