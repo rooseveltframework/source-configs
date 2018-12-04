@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const os = require('os')
 const projectRoot = require('app-root-path')
-const appPackage = require(projectRoot + '/package.json')
+const appPackage = require(projectRoot.path + '/package.json')
 const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployFile: ['df'] } })
 
 // Setting name in package.json
@@ -27,18 +27,10 @@ if (commandLineArguments.deployFile) {
   configPath = process.env.SC_DEPLOY_FILE
 } else { // package.json
   console.log('💭  Attempting to use deploy file from package.json')
-  try {
-    configPath = appPackage[DEPLOY_CONFIG_SETTING_NAME]
+  configPath = appPackage[DEPLOY_CONFIG_SETTING_NAME]
 
-    if (configPath !== null && configPath !== undefined) {
-      configPath = configPath[0] === '~' ? path.join(os.homedir(), configPath.substr(1)) : configPath
-    }
-  } catch (e) {
-    if (e.message === 'A01') {
-      console.error('❌  Failed to read package.json contents')
-    } else if (e.message === 'A02') {
-      console.error('❌  Failed to parse package.json JSON contents')
-    }
+  if (configPath !== null && configPath !== undefined) {
+    configPath = configPath[0] === '~' ? path.join(os.homedir(), configPath.substr(1)) : configPath
   }
 }
 

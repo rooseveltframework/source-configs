@@ -12,7 +12,7 @@ SourceConfigs will examine the 4 following locations and will fallback to the on
 
 ## Schema layout:
 
-To setup config for a schema, you can set up a declarative JS object as follows in a JS file:
+To setup config for a schema, you can set up a declarative JSON-like schema to describe the configuration of your project. You can define such in a JS file, JSON file, or package.json file. Here's an example implemented in a JS file:
 
 ```js
 module.exports = {
@@ -49,7 +49,7 @@ A base object (primitive) in the object should have the three properties:
 As well, you can have the following optional properties:
 
 * acceptedValues: a object to be used to define enumerations with a values field containing an array of accepted values and a fallback field which will be used if the config option is invalid
-* envVarParser: a function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings
+* envVarParser: a function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings (This can only be implemented when writing the schema in a JS file or overwritten before being initialized)
 
 Also, a primitive can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives.
 

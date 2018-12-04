@@ -1,5 +1,5 @@
 // Load in sourceConfig and an example schema
-const sourceConfig = require('./sourceConfig')
+const sourceConfig = require('source-configs')
 const schema = require('./exampleschema.json')
 
 // go get command line arguments. using yargs-parser in this example

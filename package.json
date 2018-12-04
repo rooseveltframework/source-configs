@@ -1,6 +1,6 @@
 {
   "name": "source-configs",
-  "description": "App-level config manager",
+  "description": "structure to define app-level configuration schemas and automatically consume values via multiple sources",
   "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
   "contributors": [
     "Benjamin Lannon <benjamin@lannonbr.com>"
@@ -26,6 +26,8 @@
     "lint-staged": "^8.1.0",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
+    "proxyquire": "^2.1.0",
+    "sinon": "^7.1.1",
     "standard": "^12.0.1"
   },
   "eslintConfig": {
