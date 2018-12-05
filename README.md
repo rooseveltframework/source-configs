@@ -1,6 +1,20 @@
 # source-configs
 Provides structure to define app-level configuration schemas and automatically consume values via multiple sources in Node.js applications.
 
+## Install
+
+You can grab source-configs from NPM with NPM or yarn:
+
+```
+npm install source-configs
+```
+
+or
+
+```
+yarn add source-configs
+```
+
 ## Priority basis
 
 SourceConfigs will examine the 4 following locations and will fallback to the one below it if it doesn't find the config value
@@ -59,7 +73,7 @@ Here's an example usage of the module using the schema defined above
 
 ```js
 const schema = require('./configSchema.js')
-const sourceConfigs = require('sourceConfigs')
+const sourceConfigs = require('source-configs')
 
 // Initialize the config
 sourceConfigs.init({ schema: schema })
