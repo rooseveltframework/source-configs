@@ -59,8 +59,8 @@ module.exports = {
 }
 
 /**
- * Sources the config object from the database connection configuration file
- * @param {string} filepath - File path to database connection configuration file
+ * Sources the config object from the deployment configuration file
+ * @param {string} filepath - File path to deployment configuration file
  * @return {(Object|"B01"|"B02")} Configuration object. Source deployment configuration error code if error occurs.
  */
 function sourceConfig (filepath) {

@@ -41,7 +41,7 @@ function parseObject (path, obj, commandLineArgs) {
     if (!isPrimitive(obj[key])) {
       config[key] = parseObject(newPath, obj[key], commandLineArgs)
     } else {
-      // Grab the config result from Env. Variable, Deploy Config file, or defaults
+      // Grab the config result from Command Line Args, Environment Variables, Deploy Config file, or defaults
       let configResult = checkConfig(newPath, obj[key], commandLineArgs)
 
       // If value is an enum, make sure it is valid
@@ -165,6 +165,7 @@ function processEnvVar (configObject, path) {
 
 /**
  * Check if a configObject is a primitive
+ * All primitives have a .default property so it will fail if that property is undefined
  * @function isPrimitive
  * @param {Object} configObject - schema object of config primitive
  * @return {boolean} - boolean result of if it is a primitive
@@ -180,5 +181,5 @@ function isPrimitive (configObject) {
  * @return {boolean} - boolean result of it is a string array
  */
 function isStringArray (configResult) {
-  return (typeof configResult) === 'object' && configResult.length !== undefined && configResult.length > 0 && (typeof configResult[0]) === 'string'
+  return Array.isArray(configResult) && (typeof configResult[0]) === 'string'
 }
