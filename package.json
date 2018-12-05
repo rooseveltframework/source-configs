@@ -1,0 +1,71 @@
+{
+  "name": "source-configs",
+  "description": "structure to define app-level configuration schemas and automatically consume values via multiple sources",
+  "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
+  "contributors": [
+    "Benjamin Lannon <benjamin@lannonbr.com>"
+  ],
+  "version": "0.1.0",
+  "homepage": "https://github.com/rooseveltframework/source-configs",
+  "license": "CC-BY-4.0",
+  "main": "source-configs.js",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "engineStrict": true,
+  "dependencies": {
+    "app-root-path": "^2.1.0",
+    "colors": "^1.3.2",
+    "yargs-parser": "^11.1.1"
+  },
+  "devDependencies": {
+    "codecov": "^3.1.0",
+    "eslint": "^5.9.0",
+    "eslint-plugin-mocha": "^5.2.0",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "proxyquire": "^2.1.0",
+    "sinon": "^7.1.1",
+    "standard": "^12.0.1"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "plugins": [
+      "mocha"
+    ],
+    "rules": {
+      "mocha/no-exclusive-tests": "error"
+    }
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "text",
+      "lcov"
+    ]
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --recursive --timeout 10000 test",
+    "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test",
+    "lint": "npm run standard && ./node_modules/.bin/eslint .",
+    "standard": "./node_modules/.bin/standard",
+    "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test"
+  },
+  "lint-staged": {
+    "*.js": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rooseveltframework/source-configs.git"
+  },
+  "keywords": [],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && eslint ./test"
+    }
+  }
+}
