@@ -67,7 +67,7 @@ function parseObject (path, obj, commandLineArgs) {
 }
 
 /**
- * Try getting config item from 3 locations: env vars, deployment config, and defaults
+ * Try getting config item from various locations
  * @function checkConfig
  * @param {string} path - current path of the object being parsed delimited by a period
  * @param {Object} configObject - current level of the config object
