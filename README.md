@@ -1,84 +1,87 @@
 # source-configs
-Provides structure to define app-level configuration schemas and automatically consume values via multiple sources in Node.js applications.
+A Node.js module that provides structure to define app-level configuration schemas and automatically consume values via multiple sources in Node.js applications. This module was built and is maintained by the [Roosevelt web framework team](https://github.com/rooseveltframework/roosevelt), but it can be used independently of Roosevelt as well. 
 
 ## Install
 
-You can grab source-configs from NPM with NPM or yarn:
+Declare `source-configs` as a dependency in your app.
 
+## Usage
+
+### Basic schema
+
+Create a JS file that exports an object that defines your schema as in this example:
+
+```js
+module.exports = {
+  websocket: {
+    host: {},
+    port: {},
+    protocol: {}
+  }
+}
 ```
-npm install source-configs
-```
 
-or
+In the above example, we are declaring that our application will use a WebSocket with a configurable host, port, and protocol.
 
-```
-yarn add source-configs
-```
+### Config property metadata
 
-## Priority basis
+Next we can define some metadata for each configurable property in order to create constraints if desired or add additional functionality. source-configs offers the following property attributes:
 
-SourceConfigs will examine the 4 following locations and will fallback to the one below it if it doesn't find the config value
+- `description` *[String]*: A place to explain what this configuration variable will be used for.
+- `default` *[any]*: Default value. Will be set to null if not set otherwise defined.
+- `values` *[Array]*: Enumerated list of values that are valid. If not set, any value will be valid.
+- `commandLineArg` *[TODO]*
+- `envVar` *[String]*: The name of an environment variable that can set this configuration variable. If not set, source-configs will not listen for an environment variable to set the value for this variable.
 
-* Command line arguments set in the schema under commandLineArg
-* Environment variable set in the schema as envVar
-* Deployment config file declared in the package.json as a `deployConfig` field, as a command line argument of `--deploy-file` or `--df`, or an environment variable of `SC_DEPLOY_FILE`.
-* Default defined in the schema
+- `envVarParser` *[Function]*: A function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings. This can only be implemented when writing the schema in a JS file or overwritten before being initialized. [TODO: Examples.]
 
-## Schema layout:
+Also, each configurable property can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives. [TODO: Example.]
 
-To setup config for a schema, you can set up a declarative JSON-like schema to describe the configuration of your project. You can define such in a JS file, JSON file, or package.json file. Here's an example implemented in a JS file:
+### Example with config property metadata
 
 ```js
 module.exports = {
   websocket: {
     host: {
-      envVar: 'WS_HOST',
-      desc: 'Web Socket host url',
-      default: 'localhost'
+      description: 'WebSocket host URL',
+      default: 'localhost',
+      envVar: 'WS_HOST'
     },
     port: {
-      envVar: 'WS_PORT',
-      desc: 'Web Socket port',
-      default: 8081
+      description: 'WebSocket port',
+      default: 8081,
+      envVar: 'WS_PORT'
     },
     protocol: {
-      envVar: 'WS_PROTOCOL',
-      default: 'ws',
-      acceptedValues: {
-        values: ['ws', 'wss'],
-        fallback: 'ws'
-      },
-      desc: 'protocol for web sockets'
+      description: 'Which WebSocket protocol',
+      description: 'ws',
+      acceptedValues: ['ws', 'wss'],
+      envVar: 'WS_PROTOCOL'
     }
   }
 }
 ```
 
-A base object (primitive) in the object should have the three properties:
+### Use in your app
 
-* envVar: environment variable name
-* default: default value
-* desc: description
-
-As well, you can have the following optional properties:
-
-* acceptedValues: a object to be used to define enumerations with a values field containing an array of accepted values and a fallback field which will be used if the config option is invalid
-* envVarParser: a function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings (This can only be implemented when writing the schema in a JS file or overwritten before being initialized)
-
-Also, a primitive can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives.
-
-## Usage
-
-Here's an example usage of the module using the schema defined above
+Here's an example usage of source-configs using the schema defined above:
 
 ```js
-const schema = require('./configSchema.js')
 const sourceConfigs = require('source-configs')
+const config = sourceConfigs.init({ schema: require('./your-schema-js-file.js') })
 
-// Initialize the config
-sourceConfigs.init({ schema: schema })
-
-const config = sourceConfigs.configs
-
-console.log(config.websocket.port) // Prints out 8081 if no env variables or deploy config file.
+// access one of the configs
+console.log(config.websocket.port)
 ```
+
+## Where configs are sourced from 
+
+Configs matching the schema are sourced from the following locations in the following order of precedence:
+
+- Command line argument set in the schema under `commandLineArg`.
+- Environment variable set in the schema under `envVar`.
+- Deployment config file declared via:
+  - Command line argument: `--deploy-config` or `--dc`.
+  - Environment variable: `SC_DEPLOY_CONFIG`.
+  - package.json as a `deployConfig` field.
+- Default defined in the schema.
