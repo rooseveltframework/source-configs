@@ -22,9 +22,9 @@ let config
 if (commandLineArguments.deployFile) {
   console.log('💭  Attempting to use deploy file from command line')
   configPath = commandLineArguments.deployFile
-} else if (process.env.SC_DEPLOY_FILE) {
+} else if (process.env.SC_DEPLOY_CONFIG) {
   console.log('💭  Attempting to use deploy file from ENV variable')
-  configPath = process.env.SC_DEPLOY_FILE
+  configPath = process.env.SC_DEPLOY_CONFIG
 } else { // package.json
   console.log('💭  Attempting to use deploy file from package.json')
   configPath = appPackage[DEPLOY_CONFIG_SETTING_NAME]
