@@ -30,12 +30,12 @@ Next we can define some metadata for each configurable property in order to crea
 - `description` *[String]*: A place to explain what this configuration variable will be used for.
 - `default` *[any]*: Default value. Will be set to null if not set otherwise defined.
 - `values` *[Array]*: Enumerated list of values that are valid. If not set, any value will be valid.
-- `commandLineArg` *[TODO]*
+- `commandLineArg` *[String]*: The name of a command line argument. The names are expected to be camelCased (ex: the command line argument `--disable-validator` would be set here as `disableValidator`) and will be obtained from a external command line args parser. If not set, source-configs will not listen for command line args for this variable.
 - `envVar` *[String]*: The name of an environment variable that can set this configuration variable. If not set, source-configs will not listen for an environment variable to set the value for this variable.
 
-- `envVarParser` *[Function]*: A function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings. This can only be implemented when writing the schema in a JS file or overwritten before being initialized. [TODO: Examples.]
+- `envVarParser` *[Function]*: A function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings. This can only be implemented when writing the schema in a JS file or overwritten before being initialized.
 
-Also, each configurable property can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives. [TODO: Example.]
+Also, each configurable property can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives.
 
 ### Example with config property metadata
 
@@ -54,9 +54,61 @@ module.exports = {
     },
     protocol: {
       description: 'Which WebSocket protocol',
-      description: 'ws',
-      acceptedValues: ['ws', 'wss'],
+      values: ['ws', 'wss'],
       envVar: 'WS_PROTOCOL'
+    },
+    allowAnyOrigin: {
+      description: 'Boolean to define if any origin can transmit to the websocket.',
+      commandLineArg: 'allowAnyOrigin',
+      default: false
+    },
+    allowedOrigins: {
+      description: 'List of origin domains allowed to connect to this websocket. Environment variable is defined as a comma separated list',
+      default: [],
+      envVar: 'WS_ALLOWED_ORIGINS',
+      envVarParser: ',' // WS_ALLOWED_ORIGINS='https://google.com,https://github.com' will be parsed into ['https://google.com/', 'https://github.com']
+    },
+    allowedOriginsDetailed: {
+      description: 'List of origin domains allowed to connect to this websocket that is parsed out into objects. Environment variable is defined as a comma separated list',
+      default: [],
+      envVar: 'WS_ALLOWED_ORGINS_DETAILED',
+      envVarParser: (envVar) => {
+        let originStrings = envVar.split(',');
+
+        let origins = [];
+
+        originStrings.forEach(originString => {
+          let [protocol, rest] = originString.split('://')
+
+          // If protocol is empty, set it to 'ws'
+          if (protocol === originString) {
+            protocol = 'ws'
+            rest = originString
+          }
+
+          let [host, port] = rest.split(':')
+
+          // If port is empty, set it to 80
+          if (port === undefined) {
+            port = 80
+          } else {
+            port = parseInt(port)
+          }
+
+          let origin = {
+            protocol: protocol,
+            host: host,
+            port: port
+          }
+
+          origins.push(origin)
+        })
+
+        return origins
+      }
+    }
+    fullUrl: (config) => {
+      return `${config.protocol}://${config.host}:${config.port}`
     }
   }
 }
@@ -68,7 +120,12 @@ Here's an example usage of source-configs using the schema defined above:
 
 ```js
 const sourceConfigs = require('source-configs')
-const config = sourceConfigs.init({ schema: require('./your-schema-js-file.js') })
+
+// Grab command line arguments. yargs-parser is used in this example but the minimum requirement is
+// a parser that converts command line arguments to a flat key-value map where the keys are camelCased
+const commandLineArgs = require('yargs-parser')(process.argv.slice(2))
+
+const config = sourceConfigs.init({ schema: require('./your-schema-js-file.js'), commandLineArguments: commandLineArgs })
 
 // access one of the configs
 console.log(config.websocket.port)

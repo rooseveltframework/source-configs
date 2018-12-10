@@ -27,18 +27,12 @@
     "commandLineArg": "httpMethod",
     "desc": "example enum",
     "default": "http",
-    "acceptedValues": {
-      "values": ["http", "https"],
-      "fallback": "http"
-    }
+    "values": ["http", "https"]
   },
-  "enumWithoutFallback": {
-    "commandLineArg": "noFall",
-    "desc": "enum with no fallback",
-    "default": "yes",
-    "acceptedValues": {
-      "values": ["yes", "no"]
-    }
+  "enumWithoutDefault": {
+    "commandLineArg": "noDefault",
+    "desc": "enum with no default",
+    "values": ["yes", "no"]
   },
   "webUrlObj": {
     "httpMethod": {

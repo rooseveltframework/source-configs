@@ -8,6 +8,7 @@ module.exports = {
    */
   init: function (options) {
     this.configs = parseObject('', options.schema, options.commandLineArguments)
+    return this.configs
   },
   configs: {}
 }
@@ -45,7 +46,7 @@ function parseObject (path, obj, commandLineArgs) {
       let configResult = checkConfig(newPath, obj[key], commandLineArgs)
 
       // If value is an enum, make sure it is valid
-      if (obj[key].acceptedValues !== undefined) {
+      if (obj[key].values !== undefined) {
         configResult = checkEnum(newPath, configResult, obj[key])
       }
 
@@ -91,8 +92,13 @@ function checkConfig (path, configObject, commandLineArgs) {
     return deployConfig.get(path)
   }
 
-  // and if all else fails, return the default
-  return configObject.default
+  // Then try to return the default value
+  if (configObject.default !== undefined) {
+    return configObject.default
+  }
+
+  // Otherwise, return null
+  return null
 }
 
 /**
@@ -123,14 +129,15 @@ function typeCastEntry (entryString) {
  * @return {string} config result after passing it through the pass.
  */
 function checkEnum (path, configResult, configObject) {
-  if (!configObject.acceptedValues.values.includes(configResult)) {
-    if (configObject.acceptedValues.fallback !== undefined) {
-      console.log(('⚠️  Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to fallback: ' + configObject.acceptedValues.fallback).warn)
-      console.log(('⚠️  Accepted values are: ' + configObject.acceptedValues.values.join(', ')).warn)
-      configResult = configObject.acceptedValues.fallback
+  if (!configObject.values.includes(configResult)) {
+    if (configObject.default !== undefined) {
+      console.log(('⚠️  Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default).warn)
+      console.log(('⚠️  Accepted values are: ' + configObject.values.join(', ')).warn)
+      configResult = configObject.default
     } else {
-      console.log(('❌  WARNING: Trying to set config.' + path + ' and found invalid enum value and no fallback found. Expect bugs').error)
-      console.log(('❌  Accepted values are: ' + configObject.acceptedValues.values.join(', ')).error)
+      console.log(('❌  Error: Trying to set config.' + path + ' and found invalid enum value and no default found. Set to null').error)
+      console.log(('❌  Accepted values are: ' + configObject.values.join(', ')).error)
+      configResult = null
     }
   }
 
@@ -171,7 +178,13 @@ function processEnvVar (configObject, path) {
  * @return {boolean} - boolean result of if it is a primitive
  */
 function isPrimitive (configObject) {
-  return configObject.default !== undefined
+  return Object.keys(configObject).length === 0 ||
+    configObject.default !== undefined ||
+    configObject.commandLineArg !== undefined ||
+    configObject.description !== undefined ||
+    configObject.values !== undefined ||
+    configObject.envVar !== undefined ||
+    configObject.envVarParser !== undefined
 }
 
 /**

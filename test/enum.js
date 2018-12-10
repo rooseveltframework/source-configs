@@ -32,13 +32,13 @@ describe('Enums', function () {
     done()
   })
 
-  it('should use passed arg with invalid enum and no fallback', function (done) {
+  it('should use passed arg with invalid enum and no default', function (done) {
     const commandLineArguments = {
-      noFall: 'sometimes'
+      noDefault: 'sometimes'
     }
 
     sourceConfig.init({ schema, commandLineArguments })
-    assert.deepStrictEqual(sourceConfig.configs.enumWithoutFallback, 'sometimes')
+    assert.deepStrictEqual(sourceConfig.configs.enumWithoutDefault, null)
     done()
   })
 })
