@@ -6,7 +6,7 @@ let schema
 
 describe('Deploy config', function () {
   beforeEach(function (done) {
-    process.env['SC_DEPLOY_FILE'] = './test/config.json'
+    process.env['DEPLOY_CONFIG'] = './test/config.json'
     sourceConfig = require('../sourceConfig')
     sourceConfig.configs = {}
     schema = require('./schema.json')
@@ -15,7 +15,7 @@ describe('Deploy config', function () {
   })
 
   afterEach(function (done) {
-    process.env['SC_DEPLOY_FILE'] = ''
+    process.env['DEPLOY_CONFIG'] = ''
     done()
   })
 
