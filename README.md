@@ -38,11 +38,8 @@ Schemas support the following metadata for each configurable property in order t
 - `description` *[String]*: Describe what this config will be used for.
 - `default` *[any]*: Set a default value for this config. If not set, the default is null.
 - `values` *[Array]*: Enumerated list of values that are valid. If not set, any value will be valid.
-- `commandLineArg` *[String]*: Command line argument to set this config. Will be converted to camelCase on the Node.js side. Example: the command line argument `--doThing` would be `doThing` on the Node.js side. If not set, source-configs will not listen for command line arguments to set the value for this config. [TODO: is the camelCaser really desirable?]
+- `commandLineArg` *[String]*: Command line argument to set this config. If not set, source-configs will not listen for command line arguments to set the value for this config.
 - `envVar` *[String]*: Environment variable to set this config. If not set, source-configs will not listen for an environment variable to set the value for this config.
-- `envVarParser` *[Function]*: [TODO: simplify this] A function to parse environment variables or a string which will be used as a delimiter for simple delimiter split strings. This can only be implemented when writing the schema in a JS file or overwritten before being initialized.
-
-[TODO: simplify this] Each configurable property can be a function which takes the parent scope config as a parameter to create strings based upon other config primitives.
 
 Below is a more complex WebSocket config example leveraging all of the above metadata options:
 
@@ -71,26 +68,18 @@ Below is a more complex WebSocket config example leveraging all of the above met
 }
 ```
 
+### Exposed fields in source-configs
+
+There are four exposed properties when you run `require('source-configs')`
+
+- `sourceConfigs()` *[Function]*: The module to source configs itself
+- `sourceConfigs.configs` *[Object]*: The resulting configs after running `sourceConfigs()`
+- `sourceConfigs.commandLineArgs` *[Array]*: The Result of passing the command line args through `yargs-parser`
+- `sourceConfigs.yargsParser` *[Function]*: The instance of `yargs-parser` required by `source-configs`.
+
 ### Use in your app
 
 Here's an example usage of source-configs using the schema defined above:
-
-[TODO: This example is too complicated. We should not require users to do this much boilerplate.]
-
-```js
-const sourceConfigs = require('source-configs')
-
-// Grab command line arguments. yargs-parser is used in this example but the minimum requirement is
-// a parser that converts command line arguments to a flat key-value map where the keys are camelCased
-const commandLineArgs = require('yargs-parser')(process.argv.slice(2))
-
-const config = sourceConfigs.init({ schema: require('./your-schema-js-file.js'), commandLineArguments: commandLineArgs })
-
-// access one of the configs
-console.log(config.websocket.port)
-```
-
-[TODO: this should be all that is necessary. Note the removal of init.]
 
 ```javascript
 const sourceConfigs = require('source-configs')

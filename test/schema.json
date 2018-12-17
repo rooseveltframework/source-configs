@@ -1,55 +1,54 @@
 {
   "timeout": {
-    "commandLineArg": "timeout",
+    "commandLineArg": "--timeout",
     "envVar": "TIMEOUT",
     "desc": "timeout in ms",
     "default": 5000
   },
   "apiRoute": {
-    "commandLineArg": "apiRoute",
+    "commandLineArg": "--api-route",
     "envVar": "API_ROUTE",
     "desc": "base route for API",
     "default": "/api/"
   },
   "exBool": {
-    "commandLineArg": "exBool",
+    "commandLineArg": "--ex-bool",
     "envVar": "EX_BOOL",
     "desc": "example boolean",
     "default": false
   },
   "exString": {
-    "commandLineArg": "exString",
+    "commandLineArg": "--ex-string",
     "envVar": "EX_STRING",
     "desc": "example string",
     "default": "String"
   },
   "httpMethod": {
-    "commandLineArg": "httpMethod",
+    "commandLineArg": "--http-method",
     "desc": "example enum",
     "default": "http",
     "values": ["http", "https"]
   },
   "enumWithoutDefault": {
-    "commandLineArg": "noDefault",
+    "commandLineArg": "--no-default",
     "desc": "enum with no default",
     "values": ["yes", "no"]
   },
   "webUrlObj": {
     "httpMethod": {
-      "commandLineArg": "webHttpMethod",
+      "commandLineArg": "--web-http-method",
       "desc": "http method",
       "default": "http"
     },
     "host": {
-      "commandLineArg": "webHost",
+      "commandLineArg": "--web-host",
       "desc": "web host url",
       "default": "localhost"
     },
     "port": {
-      "commandLineArg": "webPort",
+      "commandLineArg": "--web-port",
       "desc": "web port",
       "default": 8081
-    },
-    "getWebUrl": "user defined function"
+    }
   }
 }

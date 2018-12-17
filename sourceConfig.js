@@ -1,17 +1,15 @@
-module.exports = {
-  /**
-   * Initialize the config object
-   * @function init
-   * @param {Object} options - options object
-   * @param {Object} options.schema - schema for the config
-   * @param {Object} options.commandLineArguments - Parsed command line arguments
-   */
-  init: function (options) {
-    this.configs = parseObject('', options.schema, options.commandLineArguments)
-    return this.configs
-  },
-  configs: {}
+module.exports = sourceConfigs
+
+function sourceConfigs (schema) {
+  sourceConfigs.configs = parseObject('', schema, sourceConfigs.commandLineArgs)
+  return sourceConfigs.configs
 }
+
+const yargsParser = require('yargs-parser')
+
+sourceConfigs.configs = {}
+sourceConfigs.commandLineArgs = yargsParser(process.argv.slice(2))
+sourceConfigs.yargsParser = yargsParser
 
 /**
  * Recursive function to go through config schema and generate configuration
@@ -78,13 +76,13 @@ function parseObject (path, obj, commandLineArgs) {
 function checkConfig (path, configObject, commandLineArgs) {
   const deployConfig = require('./deployConfig')
 
-  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined && commandLineArgs[configObject.commandLineArg] !== undefined) {
-    return commandLineArgs[configObject.commandLineArg]
+  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined && commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
+    return commandLineArgs[configObject.commandLineArg.slice(2)]
   }
 
   // Try getting from Environment Variables first
   if (process.env[configObject.envVar]) {
-    return processEnvVar(configObject, path)
+    return process.env[configObject.envVar]
   }
 
   // Then a deployment config file
@@ -145,32 +143,6 @@ function checkEnum (path, configResult, configObject) {
 }
 
 /**
- * Grab environment variable and optionally parse it
- * @function processEnvVar
- * @param {Object} configObject - schema object of config primitive
- * @param {string} path - current path of the object being parsed delimited by a period
- * @return {(string|Array<string>)} - result from environment variable
- */
-function processEnvVar (configObject, path) {
-  if (configObject.envVarParser !== undefined) {
-    if ((typeof configObject.envVarParser) === 'string' && configObject.envVarParser !== 'user defined function') {
-      return process.env[configObject.envVar].split(configObject.envVarParser)
-    } else {
-      if (configObject.envVarParser === 'user defined function') {
-        console.log((`❌  Error: Expected user defined function to be implemented in app level code for schema.${path}.envVarParser...`).error)
-        console.log(('❌  Passing unparsed env variable back.').error)
-        return process.env[configObject.envVar]
-      } else {
-        let result = configObject.envVarParser(process.env[configObject.envVar])
-        if (result !== null) return result
-      }
-    }
-  } else {
-    return process.env[configObject.envVar]
-  }
-}
-
-/**
  * Check if a configObject is a primitive
  * All primitives have a .default property so it will fail if that property is undefined
  * @function isPrimitive
@@ -183,8 +155,7 @@ function isPrimitive (configObject) {
     configObject.commandLineArg !== undefined ||
     configObject.description !== undefined ||
     configObject.values !== undefined ||
-    configObject.envVar !== undefined ||
-    configObject.envVarParser !== undefined
+    configObject.envVar !== undefined
 }
 
 /**

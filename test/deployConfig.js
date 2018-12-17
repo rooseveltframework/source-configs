@@ -8,9 +8,10 @@ describe('Deploy config', function () {
   beforeEach(function (done) {
     process.env['DEPLOY_CONFIG'] = './test/config.json'
     sourceConfig = require('../sourceConfig')
-    sourceConfig.configs = {}
     schema = require('./schema.json')
-    sourceConfig.init({ schema })
+    sourceConfig.configs = {}
+    sourceConfig.commandLineArgs = {}
+    sourceConfig(schema)
     done()
   })
 
