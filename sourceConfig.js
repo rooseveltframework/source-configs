@@ -1,16 +1,15 @@
-module.exports = {
-  /**
-   * Initialize the config object
-   * @function init
-   * @param {Object} options - options object
-   * @param {Object} options.schema - schema for the config
-   * @param {Object} options.commandLineArguments - Parsed command line arguments
-   */
-  init: function (options) {
-    this.configs = parseObject('', options.schema, options.commandLineArguments)
-  },
-  configs: {}
+module.exports = sourceConfigs
+
+function sourceConfigs (schema) {
+  sourceConfigs.configs = parseObject('', schema, sourceConfigs.commandLineArgs)
+  return sourceConfigs.configs
 }
+
+const yargsParser = require('yargs-parser')
+
+sourceConfigs.configs = {}
+sourceConfigs.commandLineArgs = yargsParser(process.argv.slice(2))
+sourceConfigs.yargsParser = yargsParser
 
 /**
  * Recursive function to go through config schema and generate configuration
@@ -45,7 +44,7 @@ function parseObject (path, obj, commandLineArgs) {
       let configResult = checkConfig(newPath, obj[key], commandLineArgs)
 
       // If value is an enum, make sure it is valid
-      if (obj[key].acceptedValues !== undefined) {
+      if (obj[key].values !== undefined) {
         configResult = checkEnum(newPath, configResult, obj[key])
       }
 
@@ -77,13 +76,13 @@ function parseObject (path, obj, commandLineArgs) {
 function checkConfig (path, configObject, commandLineArgs) {
   const deployConfig = require('./deployConfig')
 
-  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined && commandLineArgs[configObject.commandLineArg] !== undefined) {
-    return commandLineArgs[configObject.commandLineArg]
+  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined && commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
+    return commandLineArgs[configObject.commandLineArg.slice(2)]
   }
 
   // Try getting from Environment Variables first
   if (process.env[configObject.envVar]) {
-    return processEnvVar(configObject, path)
+    return process.env[configObject.envVar]
   }
 
   // Then a deployment config file
@@ -91,8 +90,13 @@ function checkConfig (path, configObject, commandLineArgs) {
     return deployConfig.get(path)
   }
 
-  // and if all else fails, return the default
-  return configObject.default
+  // Then try to return the default value
+  if (configObject.default !== undefined) {
+    return configObject.default
+  }
+
+  // Otherwise, return null
+  return null
 }
 
 /**
@@ -123,44 +127,19 @@ function typeCastEntry (entryString) {
  * @return {string} config result after passing it through the pass.
  */
 function checkEnum (path, configResult, configObject) {
-  if (!configObject.acceptedValues.values.includes(configResult)) {
-    if (configObject.acceptedValues.fallback !== undefined) {
-      console.log(('⚠️  Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to fallback: ' + configObject.acceptedValues.fallback).warn)
-      console.log(('⚠️  Accepted values are: ' + configObject.acceptedValues.values.join(', ')).warn)
-      configResult = configObject.acceptedValues.fallback
+  if (!configObject.values.includes(configResult)) {
+    if (configObject.default !== undefined) {
+      console.log(('⚠️  Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default).warn)
+      console.log(('⚠️  Accepted values are: ' + configObject.values.join(', ')).warn)
+      configResult = configObject.default
     } else {
-      console.log(('❌  WARNING: Trying to set config.' + path + ' and found invalid enum value and no fallback found. Expect bugs').error)
-      console.log(('❌  Accepted values are: ' + configObject.acceptedValues.values.join(', ')).error)
+      console.log(('❌  Error: Trying to set config.' + path + ' and found invalid enum value and no default found. Set to null').error)
+      console.log(('❌  Accepted values are: ' + configObject.values.join(', ')).error)
+      configResult = null
     }
   }
 
   return configResult
-}
-
-/**
- * Grab environment variable and optionally parse it
- * @function processEnvVar
- * @param {Object} configObject - schema object of config primitive
- * @param {string} path - current path of the object being parsed delimited by a period
- * @return {(string|Array<string>)} - result from environment variable
- */
-function processEnvVar (configObject, path) {
-  if (configObject.envVarParser !== undefined) {
-    if ((typeof configObject.envVarParser) === 'string' && configObject.envVarParser !== 'user defined function') {
-      return process.env[configObject.envVar].split(configObject.envVarParser)
-    } else {
-      if (configObject.envVarParser === 'user defined function') {
-        console.log((`❌  Error: Expected user defined function to be implemented in app level code for schema.${path}.envVarParser...`).error)
-        console.log(('❌  Passing unparsed env variable back.').error)
-        return process.env[configObject.envVar]
-      } else {
-        let result = configObject.envVarParser(process.env[configObject.envVar])
-        if (result !== null) return result
-      }
-    }
-  } else {
-    return process.env[configObject.envVar]
-  }
 }
 
 /**
@@ -171,7 +150,12 @@ function processEnvVar (configObject, path) {
  * @return {boolean} - boolean result of if it is a primitive
  */
 function isPrimitive (configObject) {
-  return configObject.default !== undefined
+  return Object.keys(configObject).length === 0 ||
+    configObject.default !== undefined ||
+    configObject.commandLineArg !== undefined ||
+    configObject.description !== undefined ||
+    configObject.values !== undefined ||
+    configObject.envVar !== undefined
 }
 
 /**

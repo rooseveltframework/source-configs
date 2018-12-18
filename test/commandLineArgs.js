@@ -1,7 +1,11 @@
 /* eslint-env mocha */
 const assert = require('assert')
 
-let commandLineArguments
+let commandLineArguments = {
+  'api-route': '/api/b',
+  timeout: '4000',
+  'ex-bool': 'true'
+}
 
 let sourceConfig
 let schema
@@ -9,23 +13,18 @@ let schema
 describe('Command Line Arguments', function () {
   beforeEach(function (done) {
     sourceConfig = require('../sourceConfig')
+    sourceConfig.configs = {}
     schema = require('./schema.json')
 
-    sourceConfig.configs = {}
+    sourceConfig.commandLineArgs = commandLineArguments
 
-    commandLineArguments = {
-      apiRoute: '/api/b',
-      timeout: '4000',
-      exBool: 'true'
-    }
-
-    sourceConfig.init({ schema, commandLineArguments })
+    sourceConfig(schema)
 
     done()
   })
 
   it('should expect an object parsed beforehand', function (done) {
-    assert.deepStrictEqual(sourceConfig.configs.apiRoute, commandLineArguments.apiRoute)
+    assert.deepStrictEqual(sourceConfig.configs.apiRoute, commandLineArguments['api-route'])
     done()
   })
 

@@ -14,31 +14,36 @@ describe('Enums', function () {
 
   it('should pass with a valid enum', function (done) {
     const commandLineArguments = {
-      httpMethod: 'http'
+      'http-method': 'http'
     }
+    sourceConfig.commandLineArgs = commandLineArguments
 
-    sourceConfig.init({ schema, commandLineArguments })
+    sourceConfig(schema)
     assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
     done()
   })
 
   it('should use fallback with invalid enum', function (done) {
     const commandLineArguments = {
-      httpMethod: 'httpz'
+      'http-method': 'httpz'
     }
 
-    sourceConfig.init({ schema, commandLineArguments })
+    sourceConfig.commandLineArgs = commandLineArguments
+
+    sourceConfig(schema)
     assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
     done()
   })
 
-  it('should use passed arg with invalid enum and no fallback', function (done) {
+  it('should use passed arg with invalid enum and no default', function (done) {
     const commandLineArguments = {
-      noFall: 'sometimes'
+      'no-default': 'sometimes'
     }
 
-    sourceConfig.init({ schema, commandLineArguments })
-    assert.deepStrictEqual(sourceConfig.configs.enumWithoutFallback, 'sometimes')
+    sourceConfig.commandLineArgs = commandLineArguments
+
+    sourceConfig(schema)
+    assert.deepStrictEqual(sourceConfig.configs.enumWithoutDefault, null)
     done()
   })
 })
