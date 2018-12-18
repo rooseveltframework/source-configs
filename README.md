@@ -49,8 +49,8 @@ Below is a more complex WebSocket config example leveraging all of the above met
     host: {
       description: 'WebSocket host URL',
       default: 'localhost',
-      commandLineArg: '--ws-host',
-      envVar: 'WS_HOST'
+      commandLineArg: ['--websocket-host-url', '--ws-host'],
+      envVar: ['WEBSOCKET_HOST_URL', 'WS_HOST']
     },
     port: {
       description: 'WebSocket port',
