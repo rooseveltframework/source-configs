@@ -37,6 +37,14 @@ describe('environment variables', function () {
     done()
   })
 
+  it('should support arrays of environment variables', function (done) {
+    process.env['FOO'] = 10
+
+    sourceConfig(schema)
+    assert.strictEqual(sourceConfig.configs.envVarArray, 10)
+    done()
+  })
+
   it('should default when not passed in anything', function (done) {
     sourceConfig(schema)
     assert.strictEqual(sourceConfig.configs.exString, 'String')

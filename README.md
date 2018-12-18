@@ -38,8 +38,8 @@ Schemas support the following metadata for each configurable property in order t
 - `description` *[String]*: Describe what this config will be used for.
 - `default` *[any]*: Set a default value for this config. If not set, the default is null.
 - `values` *[Array]*: Enumerated list of values that are valid. If not set, any value will be valid.
-- `commandLineArg` *[String]*: Command line argument to set this config. If not set, source-configs will not listen for command line arguments to set the value for this config.
-- `envVar` *[String]*: Environment variable to set this config. If not set, source-configs will not listen for an environment variable to set the value for this config.
+- `commandLineArg` *[String|Array<String>]*: Command line argument to set this config. This field can be an array of strings to set multiple strings to check for. If not set, source-configs will not listen for command line arguments to set the value for this config.
+- `envVar` *[String|Array<String>]*: Environment variable to set this config. This field can be an array of strings to set multiple strings to check for. If not set, source-configs will not listen for an environment variable to set the value for this config.
 
 Below is a more complex WebSocket config example leveraging all of the above metadata options:
 

@@ -76,13 +76,33 @@ function parseObject (path, obj, commandLineArgs) {
 function checkConfig (path, configObject, commandLineArgs) {
   const deployConfig = require('./deployConfig')
 
-  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined && commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
-    return commandLineArgs[configObject.commandLineArg.slice(2)]
+  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
+    if (isStringArray(configObject.commandLineArg)) {
+      for (let arg of configObject.commandLineArg) {
+        if (commandLineArgs[arg.slice(2)] !== undefined) {
+          return commandLineArgs[arg.slice(2)]
+        }
+      }
+    } else {
+      if (commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
+        return commandLineArgs[configObject.commandLineArg.slice(2)]
+      }
+    }
   }
 
   // Try getting from Environment Variables first
-  if (process.env[configObject.envVar]) {
-    return process.env[configObject.envVar]
+  if (configObject.envVar !== undefined) {
+    if (isStringArray(configObject.envVar)) {
+      for (let envVar of configObject.envVar) {
+        if (process.env[envVar]) {
+          return process.env[envVar]
+        }
+      }
+    } else {
+      if (process.env[configObject.envVar]) {
+        return process.env[configObject.envVar]
+      }
+    }
   }
 
   // Then a deployment config file
