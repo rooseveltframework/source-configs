@@ -68,14 +68,13 @@ Below is a more complex WebSocket config example leveraging all of the above met
 }
 ```
 
-### Exposed fields in source-configs
+### Properties of source-configs module
 
-There are four exposed properties when you run `require('source-configs')`
+In addition to its constructor, source-configs exposes the following properties:
 
-- `sourceConfigs()` *[Function]*: The module to source configs itself
-- `sourceConfigs.configs` *[Object]*: The resulting configs after running `sourceConfigs()`
-- `sourceConfigs.commandLineArgs` *[Array]*: The Result of passing the command line args through `yargs-parser`
-- `sourceConfigs.yargsParser` *[Function]*: The instance of `yargs-parser` required by `source-configs`.
+- `configs` *[Object]*: The resulting configs after running source-config's constructor.
+- `commandLineArgs` *[Array]*: All command line arguments passed to your application, including those not listened for by your schema. Powered by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
+- `yargsParser` *[Function]*: The instance of [yargs-parser](https://www.npmjs.com/package/yargs-parser) that source-configs used to compile all command line arguments passed to your application.
 
 ### Use in your app
 
@@ -89,4 +88,3 @@ const config = sourceConfigs(schema)
 // access one of the configs
 console.log(config.websocket.port)
 ```
-
