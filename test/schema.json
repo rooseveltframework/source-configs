@@ -23,6 +23,16 @@
     "desc": "example string",
     "default": "String"
   },
+  "commandLineArgArray": {
+    "commandLineArg": ["--arg-array", "--a"],
+    "desc": "Example array of command line args",
+    "default": ""
+  },
+  "envVarArray": {
+    "envVar": ["FOO_BAR", "FOO"],
+    "desc": "Example array of environment variables",
+    "default": ""
+  },
   "httpMethod": {
     "commandLineArg": "--http-method",
     "desc": "example enum",

@@ -4,7 +4,8 @@ const assert = require('assert')
 let commandLineArguments = {
   'api-route': '/api/b',
   timeout: '4000',
-  'ex-bool': 'true'
+  'ex-bool': 'true',
+  a: 'foobar'
 }
 
 let sourceConfig
@@ -35,6 +36,11 @@ describe('Command Line Arguments', function () {
 
   it('will parse strings to bools', function (done) {
     assert.deepStrictEqual(sourceConfig.configs.exBool, true)
+    done()
+  })
+
+  it('will work with an array of command line args', function (done) {
+    assert.deepStrictEqual(sourceConfig.configs.commandLineArgArray, 'foobar')
     done()
   })
 
