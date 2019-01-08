@@ -1,3 +1,7 @@
+const logger = require('roosevelt-logger')({
+  disable: ['LOADED_MOCHA_OPTS']
+})
+
 module.exports = sourceConfigs
 
 function sourceConfigs (schema) {
@@ -27,8 +31,8 @@ function parseObject (path, obj, commandLineArgs) {
 
     // Check if a user defined function has been implemented before calling init. if not, notify the user on such.
     if (obj[key] === 'user defined function') {
-      console.log((`❌  Error: Expected user defined function to be implemented in app level code for schema.${newPath}...`).error)
-      console.log((`❌  Setting field to null`).error)
+      logger.error(`Error: Expected user defined function to be implemented in app level code for schema.${newPath}...`)
+      logger.error('Setting field to null')
       config[key] = null
       continue
     } else if (typeof obj[key] === 'function') {
@@ -149,12 +153,12 @@ function typeCastEntry (entryString) {
 function checkEnum (path, configResult, configObject) {
   if (!configObject.values.includes(configResult)) {
     if (configObject.default !== undefined) {
-      console.log(('⚠️  Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default).warn)
-      console.log(('⚠️  Accepted values are: ' + configObject.values.join(', ')).warn)
+      logger.warn('Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default)
+      logger.warn('Accepted values are: ' + configObject.values.join(', '))
       configResult = configObject.default
     } else {
-      console.log(('❌  Error: Trying to set config.' + path + ' and found invalid enum value and no default found. Set to null').error)
-      console.log(('❌  Accepted values are: ' + configObject.values.join(', ')).error)
+      logger.error('Error: Trying to set config.' + path + ' and found invalid enum value and no default found. Set to null')
+      logger.error('Accepted values are: ' + configObject.values.join(', '))
       configResult = null
     }
   }
