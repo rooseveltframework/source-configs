@@ -1,6 +1,4 @@
-const logger = require('roosevelt-logger')({
-  disable: ['LOADED_MOCHA_OPTS']
-})
+const logger = require('roosevelt-logger')()
 
 module.exports = sourceConfigs
 
