@@ -8,25 +8,23 @@ const os = require('os')
 const projectRoot = require('app-root-path')
 const appPackage = require(projectRoot.path + '/package.json')
 const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployFile: ['df'] } })
+const logger = require('roosevelt-logger')()
 
 // Setting name in package.json
 const DEPLOY_CONFIG_SETTING_NAME = 'deployConfig'
-
-// Enable CLI output colors
-require('./cli-colors')
 
 let configPath
 let config
 
 // First
 if (commandLineArguments.deployFile) {
-  console.log('💭  Attempting to use deploy file from command line')
+  logger.log('💭', 'Attempting to use deploy file from command line')
   configPath = commandLineArguments.deployFile
 } else if (process.env.DEPLOY_CONFIG) {
-  console.log('💭  Attempting to use deploy file from ENV variable')
+  logger.log('💭', 'Attempting to use deploy file from ENV variable')
   configPath = process.env.DEPLOY_CONFIG
 } else { // package.json
-  console.log('💭  Attempting to use deploy file from package.json')
+  logger.log('💭', 'Attempting to use deploy file from package.json')
   configPath = appPackage[DEPLOY_CONFIG_SETTING_NAME]
 
   if (configPath !== null && configPath !== undefined) {
@@ -36,19 +34,19 @@ if (commandLineArguments.deployFile) {
 
 if (configPath === null || configPath === undefined) {
   // Package.json does not specify deployment config path
-  console.warn('❗  A deployment configuration file was not specified in package.json, falling back to env variables, defaults, and prompting (where appropriate)'.warn)
+  logger.warn('❗', 'A deployment configuration file was not specified in package.json, falling back to env variables, defaults, and prompting (where appropriate)')
   config = null
 } else {
   config = sourceConfig(configPath)
 
   if (config === 'B01') {
-    console.warn('❌  Could not read/access deployment configuration file "$FILEPATH"'.replace('$FILEPATH', configPath).warn)
+    logger.error('Could not read/access deployment configuration file "$FILEPATH"'.replace('$FILEPATH', configPath))
     config = null
   } else if (config === 'B02') {
-    console.warn('❌  Could not parse deployment configuration file JSON. Ensure JSON formatting is valid.'.warn)
+    logger.error('Could not parse deployment configuration file JSON. Ensure JSON formatting is valid.')
     config = null
   } else {
-    console.log(('✔️  Configuration file found: ' + configPath).success)
+    logger.log('✔️ ', `Configuration file found: ${configPath}`.green)
   }
 }
 
