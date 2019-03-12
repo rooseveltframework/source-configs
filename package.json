@@ -9,7 +9,7 @@
   "version": "0.1.0",
   "homepage": "https://github.com/rooseveltframework/source-configs",
   "license": "CC-BY-4.0",
-  "main": "source-configs.js",
+  "main": "sourceConfig.js",
   "engines": {
     "node": ">=10.0.0"
   },
