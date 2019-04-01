@@ -6,7 +6,7 @@
     "Eric Newport <kethinov@gmail.com>",
     "Benjamin Lannon <benjamin@lannonbr.com>"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/rooseveltframework/source-configs",
   "license": "CC-BY-4.0",
   "main": "sourceConfig.js",
