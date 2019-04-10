@@ -52,8 +52,7 @@
   "scripts": {
     "codecov": "codecov",
     "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test",
-    "lint": "npm run standard && ./node_modules/.bin/eslint ./test",
-    "standard": "./node_modules/.bin/standard",
+    "lint": "standard && eslint ./test",
     "test": "./node_modules/.bin/mocha --recursive --timeout 10000 test",
     "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test"
   },
