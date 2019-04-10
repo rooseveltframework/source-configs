@@ -6,11 +6,6 @@ const proxyquire = require('proxyquire')
 const expectedConfig = require('./config.json')
 
 describe('getDeployConfig', function () {
-  it('should do thing', function (done) {
-    assert.strictEqual(true, true)
-    done()
-  })
-
   it('should grab a deploy file from command line args', function (done) {
     const yargsParserStub = sinon.stub().returns({
       deployFile: path.join(`${__dirname}/config.json`)
