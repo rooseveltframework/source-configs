@@ -50,11 +50,11 @@
     ]
   },
   "scripts": {
+    "codecov": "codecov",
+    "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test",
+    "lint": "standard && eslint ./test",
     "test": "./node_modules/.bin/mocha --recursive --timeout 10000 test",
-    "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test",
-    "lint": "npm run standard && ./node_modules/.bin/eslint .",
-    "standard": "./node_modules/.bin/standard",
-    "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test"
+    "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test"
   },
   "lint-staged": {
     "*.js": "standard"
