@@ -1,7 +1,9 @@
 /* eslint-env mocha */
 
 before(function (done) {
-  require('roosevelt-logger').winstonInstance.silent = true
+  const Logger = require('roosevelt-logger')
+  const logger = new Logger()
+  logger.winstonInstance.silent = true
   done()
 })
 
