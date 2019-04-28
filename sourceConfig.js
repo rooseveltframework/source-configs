@@ -1,4 +1,5 @@
-const logger = require('roosevelt-logger')()
+const Logger = require('roosevelt-logger')
+const logger = new Logger()
 
 module.exports = sourceConfigs
 

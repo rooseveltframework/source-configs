@@ -8,7 +8,8 @@ const os = require('os')
 const projectRoot = require('app-root-path')
 const appPackage = require(projectRoot.path + '/package.json')
 const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployFile: ['df'] } })
-const logger = require('roosevelt-logger')()
+const Logger = require('roosevelt-logger')
+const logger = new Logger()
 
 // Setting name in package.json
 const DEPLOY_CONFIG_SETTING_NAME = 'deployConfig'

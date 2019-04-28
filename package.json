@@ -16,7 +16,7 @@
   "engineStrict": true,
   "dependencies": {
     "app-root-path": "2.2.1",
-    "roosevelt-logger": "0.1.0",
+    "roosevelt-logger": "0.2.0",
     "yargs-parser": "13.0.0"
   },
   "devDependencies": {
