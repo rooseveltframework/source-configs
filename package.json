@@ -4,9 +4,10 @@
   "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
   "contributors": [
     "Eric Newport <kethinov@gmail.com>",
+    "Troy Coutu <autre31415@gmail.com>",
     "Benjamin Lannon <benjamin@lannonbr.com>"
   ],
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/rooseveltframework/source-configs",
   "license": "CC-BY-4.0",
   "main": "sourceConfig.js",

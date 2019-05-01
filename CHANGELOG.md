@@ -4,10 +4,16 @@
 
 - Put changes here...
 
+## 0.1.2
+
+- Updated roosevelt-logger, which fixes some downstream bugs.
+- Various other dependencies updated.
+- CI improvements.
+
 ## 0.1.1
 
 - Fixed main filename for npm package.
-- Updated dependencies
+- Various dependencies updated.
 
 ## 0.1.0
 
