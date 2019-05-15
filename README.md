@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rooseveltframework/source-configs.svg?branch=master)](https://travis-ci.org/rooseveltframework/source-configs) [![codecov](https://codecov.io/gh/rooseveltframework/source-configs/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/source-configs) [![npm](https://img.shields.io/npm/v/source-configs.svg)](https://www.npmjs.com/package/source-configs)
 
-A Node.js module that harvests app-level config values from command line arguments, environment variables, or config files based on a config schema you define within your app. This module was built and is maintained by the [Roosevelt web framework team](https://github.com/orgs/rooseveltframework/people), but it can be used independently of Roosevelt as well.
+A Node.js module that harvests app-level config values from command line arguments, environment variables, or config files based on a config schema you define within your app. This module was built and is maintained by the [Roosevelt web framework](https://github.com/rooseveltframework/roosevelt) [team](https://github.com/orgs/rooseveltframework/people), but it can be used independently of Roosevelt as well.
 
 Configs matching a given schema are sourced from the following locations in the following order of precedence:
 
