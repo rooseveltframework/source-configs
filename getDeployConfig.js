@@ -7,7 +7,7 @@ const fs = require('fs')
 const os = require('os')
 const projectRoot = require('app-root-path')
 const appPackage = require(projectRoot.path + '/package.json')
-const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployConfigFile: [ 'df'] } })
+const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployConfigFile: ['df'] } })
 const Logger = require('roosevelt-logger')
 const logger = new Logger()
 
