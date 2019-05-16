@@ -9,7 +9,7 @@ Configs matching a given schema are sourced from the following locations in the 
 - Command line argument set in the schema via `commandLineArg`.
 - Environment variable set in the schema via `envVar`.
 - Deployment config file declared via:
-  - Command line argument: `--deploy-config` or `--dc`.
+  - Command line argument: `--deploy-config-file` or `--df`.
   - Environment variable: `DEPLOY_CONFIG`.
   - package.json as a `deployConfig` field.
 - Default defined in the schema.
