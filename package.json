@@ -21,7 +21,7 @@
     "yargs-parser": "13.1.0"
   },
   "devDependencies": {
-    "codecov": "3.3.0",
+    "codecov": "3.5.0",
     "eslint": "5.16.0",
     "eslint-plugin-mocha": "5.3.0",
     "husky": "2.2.0",
