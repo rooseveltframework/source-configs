@@ -43,6 +43,12 @@ Schemas support the following metadata for each configurable property in order t
 - `commandLineArg` *[String|Array<String>]*: Command line argument(s) to listen for that will set this config. If not set, source-configs will not listen for command line arguments to set the value for this config.
 - `envVar` *[String|Array<String>]*: Environment variable(s) to listen for that will set this config. If not set, source-configs will not listen for an environment variable to set the value for this config.
 
+### User Defined Functions
+
+Additionally, a schema can be a function which has the parent config passed to it as the first argument. To do this create a key/value pair within the schema object:
+ - If the schema is stored in a `.js` file, set the key as the desired function name and the value as the function.
+ - If using a `.json` file to store the schema, set the key as the desired function name and the value as `'user defined function'`. Once the `.json` file is required in, override the key's value with the desired function.
+
 Below is a more complex WebSocket config example leveraging all of the above metadata options:
 
 ```js
@@ -66,7 +72,8 @@ Below is a more complex WebSocket config example leveraging all of the above met
       values: ['ws', 'wss'],
       commandLineArg: '--ws-protocol',
       envVar: 'WS_PROTOCOL'
-    }
+    },
+    url: 'user defined function'
   }
 }
 ```
@@ -78,6 +85,9 @@ Here's an example usage of source-configs using the schema defined above:
 ```javascript
 const sourceConfigs = require('source-configs')
 const schema = require('./your-schema-js-file.json')
+schema.websocket.url = function (config) {
+  return config.protocol + '://' + config.host + ':' + config.port
+}
 const config = sourceConfigs(schema)
 
 // access one of the configs
