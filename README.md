@@ -46,8 +46,8 @@ Schemas support the following metadata for each configurable property in order t
 ### User Defined Functions
 
 Additionally, a schema can be a function which has the parent config passed to it as the first argument. To do this create a key/value pair within the schema object:
- - If using a `.json` file to store the schema set the key as the desired function name and the value as `user defined function`. Once the `.json` file is required in, overwrite the keys value with the desired function.
- - If the schema is stored in a `.js` file set the key as the desired function name and the value as the function.
+ - If using a `.json` file to store the schema, set the key as the desired function name and the value as `'user defined function'`. Once the `.json` file is required in, override the key's value with the desired function.
+ - If the schema is stored in a `.js` file, set the key as the desired function name and the value as the function.
 
 Below is a more complex WebSocket config example leveraging all of the above metadata options:
 
