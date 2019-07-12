@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put changes here...
+- Updated standard to v13.
 
 ## 0.2.0
 

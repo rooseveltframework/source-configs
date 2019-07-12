@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const assert = require('assert')
 
-let commandLineArguments = {
+const commandLineArguments = {
   'api-route': '/api/b',
   timeout: '4000',
   'ex-bool': 'true',
