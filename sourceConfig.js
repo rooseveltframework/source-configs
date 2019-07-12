@@ -23,10 +23,10 @@ sourceConfigs.yargsParser = yargsParser
  * @return {Object} generated config object
  */
 function parseObject (path, obj, commandLineArgs) {
-  let config = {}
+  const config = {}
 
-  for (let key in obj) {
-    let newPath = path === '' ? key : path + '.' + key
+  for (const key in obj) {
+    const newPath = path === '' ? key : path + '.' + key
 
     // Check if a user defined function has been implemented before calling init. if not, notify the user on such.
     if (obj[key] === 'user defined function') {
@@ -81,7 +81,7 @@ function checkConfig (path, configObject, commandLineArgs) {
 
   if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
     if (isStringArray(configObject.commandLineArg)) {
-      for (let arg of configObject.commandLineArg) {
+      for (const arg of configObject.commandLineArg) {
         if (commandLineArgs[arg.slice(2)] !== undefined) {
           return commandLineArgs[arg.slice(2)]
         }
@@ -96,7 +96,7 @@ function checkConfig (path, configObject, commandLineArgs) {
   // Try getting from Environment Variables first
   if (configObject.envVar !== undefined) {
     if (isStringArray(configObject.envVar)) {
-      for (let envVar of configObject.envVar) {
+      for (const envVar of configObject.envVar) {
         if (process.env[envVar]) {
           return process.env[envVar]
         }
