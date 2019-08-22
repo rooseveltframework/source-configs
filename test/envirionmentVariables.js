@@ -14,7 +14,7 @@ describe('environment variables', function () {
   })
 
   it('should take a plain environment variable', function (done) {
-    process.env['API_ROUTE'] = '/api'
+    process.env.API_ROUTE = '/api'
 
     sourceConfig(schema)
     assert.strictEqual(sourceConfig.configs.apiRoute, '/api')
@@ -22,7 +22,7 @@ describe('environment variables', function () {
   })
 
   it('should map a number string to an int', function (done) {
-    process.env['TIMEOUT'] = '20'
+    process.env.TIMEOUT = '20'
 
     sourceConfig(schema)
     assert.strictEqual(sourceConfig.configs.timeout, 20)
@@ -30,7 +30,7 @@ describe('environment variables', function () {
   })
 
   it('should map a bool string to a bool', function (done) {
-    process.env['EX_BOOL'] = 'true'
+    process.env.EX_BOOL = 'true'
 
     sourceConfig(schema)
     assert.strictEqual(sourceConfig.configs.exBool, true)
@@ -38,7 +38,7 @@ describe('environment variables', function () {
   })
 
   it('should support arrays of environment variables', function (done) {
-    process.env['FOO'] = 10
+    process.env.FOO = 10
 
     sourceConfig(schema)
     assert.strictEqual(sourceConfig.configs.envVarArray, 10)
