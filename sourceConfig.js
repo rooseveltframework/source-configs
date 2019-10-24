@@ -173,12 +173,13 @@ function checkEnum (path, configResult, configObject) {
  * @return {boolean} - boolean result of if it is a primitive
  */
 function isPrimitive (configObject) {
-  return Object.keys(configObject).length === 0 ||
+  return typeof configObject.description !== 'object' && // If description is not a string it is another configured config item and not a primitive, return false
+    (Object.keys(configObject).length === 0 ||
     configObject.default !== undefined ||
     configObject.commandLineArg !== undefined ||
     configObject.description !== undefined ||
     configObject.values !== undefined ||
-    configObject.envVar !== undefined
+    configObject.envVar !== undefined)
 }
 
 /**
