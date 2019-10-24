@@ -2,7 +2,12 @@
 
 ## Next version
 
-- Updated standard to v13.
+- Put your changes here...
+
+## 0.2.1
+
+- Fixed bug where certain reserved words would break source-configs.
+- Various dependencies updated.
 
 ## 0.2.0
 
