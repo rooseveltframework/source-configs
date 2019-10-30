@@ -4,7 +4,7 @@ const assert = require('assert')
 let schema
 let sourceConfig
 
-describe('should type check an array of strings', function () {
+describe('Array of Strings Type Check', function () {
   beforeEach(function (done) {
     sourceConfig = require('../sourceConfig')
     sourceConfig.configs = {}
