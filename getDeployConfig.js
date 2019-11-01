@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const os = require('os')
 const projectRoot = require('app-root-path')
-const appPackage = require(projectRoot.path + '/package.json')
+const appPackage = require(path.join(projectRoot.path, 'package.json'))
 const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployConfigFile: ['df'] } })
 const Logger = require('roosevelt-logger')
 const logger = new Logger()
@@ -27,7 +27,6 @@ if (commandLineArguments.deployConfigFile) {
 } else { // package.json
   logger.log('💭', 'Attempting to use deploy file from package.json')
   configPath = appPackage[DEPLOY_CONFIG_SETTING_NAME]
-
   if (configPath !== null && configPath !== undefined) {
     configPath = configPath[0] === '~' ? path.join(os.homedir(), configPath.substr(1)) : configPath
   }
