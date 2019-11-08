@@ -11,6 +11,10 @@ const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { al
 const Logger = require('roosevelt-logger')
 const logger = new Logger()
 
+if (process.env.NODE_ENV === 'test') {
+  logger.disableLogging()
+}
+
 // Setting name in package.json
 const DEPLOY_CONFIG_SETTING_NAME = 'deployConfig'
 

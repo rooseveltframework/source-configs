@@ -14,6 +14,10 @@ sourceConfigs.configs = {}
 sourceConfigs.commandLineArgs = yargsParser(process.argv.slice(2))
 sourceConfigs.yargsParser = yargsParser
 
+if (process.env.NODE_ENV === 'test') {
+  logger.disableLogging()
+}
+
 /**
  * Recursive function to go through config schema and generate configuration
  * @function parseObject
