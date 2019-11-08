@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "codecov": "~3.6.1",
+    "cross-env": "^6.0.3",
     "eslint": "~6.6.0",
     "eslint-plugin-mocha": "~6.2.0",
     "husky": "~3.0.9",
@@ -60,7 +61,7 @@
     "codecov": "codecov",
     "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test",
     "lint": "standard && eslint ./test",
-    "test": "./node_modules/.bin/mocha --recursive --timeout 10000 test",
+    "test": "cross-env MOCHA_MODE=true ./node_modules/.bin/mocha --recursive --timeout 10000 test",
     "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test"
   },
   "lint-staged": {

@@ -4,7 +4,6 @@ before(function (done) {
   const Logger = require('roosevelt-logger')
   const logger = new Logger()
   logger.winstonInstance.silent = true
-  process.env.MOCHA_MODE = 'true'
   done()
 })
 
@@ -13,12 +12,6 @@ beforeEach(function (done) {
   delete require.cache[require.resolve('../getDeployConfig')]
   delete require.cache[require.resolve('../sourceConfig')]
   delete require.cache[require.resolve('../deployConfig')]
-
-  done()
-})
-
-after(function (done) {
-  delete process.env.MOCHA_MODE
 
   done()
 })
