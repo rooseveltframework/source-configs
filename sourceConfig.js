@@ -1,5 +1,10 @@
 const Logger = require('roosevelt-logger')
-const logger = new Logger()
+const params = {
+  params: {
+    disable: ['MOCHA_MODE'] // disable logging during Mocha tests
+  }
+}
+const logger = new Logger(params)
 
 module.exports = sourceConfigs
 
@@ -13,10 +18,6 @@ const yargsParser = require('yargs-parser')
 sourceConfigs.configs = {}
 sourceConfigs.commandLineArgs = yargsParser(process.argv.slice(2))
 sourceConfigs.yargsParser = yargsParser
-
-if (process.env.NODE_ENV === 'test') {
-  logger.disableLogging()
-}
 
 /**
  * Recursive function to go through config schema and generate configuration
