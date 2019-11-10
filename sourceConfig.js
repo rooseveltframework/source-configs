@@ -1,5 +1,10 @@
 const Logger = require('roosevelt-logger')
-const logger = new Logger()
+const params = {
+  params: {
+    disable: ['SILENT_MODE'] // disable logging during Mocha tests
+  }
+}
+const logger = new Logger(params)
 
 module.exports = sourceConfigs
 

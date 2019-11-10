@@ -9,7 +9,12 @@ const projectRoot = require('app-root-path')
 const appPackage = require(path.join(projectRoot.path, 'package.json'))
 const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { alias: { deployConfigFile: ['df'] } })
 const Logger = require('roosevelt-logger')
-const logger = new Logger()
+const params = {
+  params: {
+    disable: ['SILENT_MODE'] // disable logging during Mocha tests
+  }
+}
+const logger = new Logger(params)
 
 // Setting name in package.json
 const DEPLOY_CONFIG_SETTING_NAME = 'deployConfig'
