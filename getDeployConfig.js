@@ -11,7 +11,7 @@ const commandLineArguments = require('yargs-parser')(process.argv.slice(2), { al
 const Logger = require('roosevelt-logger')
 const params = {
   params: {
-    disable: ['MOCHA_MODE'] // disable logging during Mocha tests
+    disable: ['SILENT_MODE'] // disable logging during Mocha tests
   }
 }
 const logger = new Logger(params)

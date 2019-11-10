@@ -61,7 +61,7 @@
     "codecov": "codecov",
     "coverage": "nyc ./node_modules/.bin/mocha --recursive --timeout 10000 test",
     "lint": "standard && eslint ./test",
-    "test": "cross-env MOCHA_MODE=true ./node_modules/.bin/mocha --recursive --timeout 10000 test",
+    "test": "cross-env SILENT_MODE=true ./node_modules/.bin/mocha --recursive --timeout 10000 test",
     "test-debug": "./node_modules/.bin/mocha --inspect-brk --timeout 10000 test"
   },
   "lint-staged": {
