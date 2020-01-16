@@ -1,15 +1,57 @@
+const getFromConfig = require('./getFromConfig')
 const Logger = require('roosevelt-logger')
-const params = {
-  params: {
-    disable: ['SILENT_MODE'] // disable logging during Mocha tests
-  }
-}
-const logger = new Logger(params)
+let logger
 
 module.exports = sourceConfigs
 
-function sourceConfigs (schema) {
-  sourceConfigs.configs = parseObject('', schema, sourceConfigs.commandLineArgs)
+function sourceConfigs (schema, config) {
+  /**
+   * when a custom config source doesn't supply an object...
+   * source the config from the schema instead if it exists
+   * otherwise ignore it
+   */
+
+  // ensure config is an object
+  config = config || {}
+
+  // set default source priority when unset
+  config.sources = config.sources || [
+    { name: 'commandLineArgs' },
+    { name: 'envVar' },
+    { name: 'deployConfig' }
+  ]
+
+  const params = {
+    params: {
+      disable: ['SILENT_MODE'] // disable logging during Mocha tests
+    }
+  }
+
+  // check that deployConfig is a source before requiring it
+  for (const key in config.sources) {
+    const source = config.sources[key]
+
+    if (source.name === 'deployConfig') {
+      source.source = require('./getDeployConfig').config
+      break
+    }
+  }
+
+  // setup the logger
+  logger = new Logger(params)
+
+  // disable logging if config turns it off
+  if (config.logging === false) {
+    logger.disableLogging()
+  }
+
+  sourceConfigs.configs = parseObject('', schema, sourceConfigs.commandLineArgs, config.sources)
+
+  // run transformation on config if function is in use
+  if (config.transform && typeof config.transform === 'function') {
+    sourceConfigs.configs = config.transform(sourceConfigs.configs, sourceConfigs.commandLineArgs)
+  }
+
   return sourceConfigs.configs
 }
 
@@ -25,9 +67,10 @@ sourceConfigs.yargsParser = yargsParser
  * @param {string} path - current path of the object being parsed delimited by a period
  * @param {Object} obj - current level of the config object
  * @param {Object} commandLineArgs - parsed commmand line arguments
+ * @param {Array} sources - list of sources to check from
  * @return {Object} generated config object
  */
-function parseObject (path, obj, commandLineArgs) {
+function parseObject (path, obj, commandLineArgs, sources) {
   const config = {}
 
   for (const key in obj) {
@@ -46,10 +89,10 @@ function parseObject (path, obj, commandLineArgs) {
 
     // Recurse if the current object is not a primitive (has 'desc', 'envVar', 'default' fields)
     if (!isPrimitive(obj[key])) {
-      config[key] = parseObject(newPath, obj[key], commandLineArgs)
+      config[key] = parseObject(newPath, obj[key], commandLineArgs, sources)
     } else {
       // Grab the config result from Command Line Args, Environment Variables, Deploy Config file, or defaults
-      let configResult = checkConfig(newPath, obj[key], commandLineArgs)
+      let configResult = checkConfig(newPath, obj[key], commandLineArgs, sources)
 
       // If value is an enum, make sure it is valid
       if (obj[key].values !== undefined) {
@@ -79,52 +122,81 @@ function parseObject (path, obj, commandLineArgs) {
  * @param {string} path - current path of the object being parsed delimited by a period
  * @param {Object} configObject - current level of the config object
  * @param {Object} commandLineArgs - parsed command line arguments
+ * @param {Array} sources - list of sources to check from
  * @return {*} - the value found for the config item
  */
-function checkConfig (path, configObject, commandLineArgs) {
-  const deployConfig = require('./deployConfig')
+function checkConfig (path, configObject, commandLineArgs, sources) {
+  let value
 
-  if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
-    if (isStringArray(configObject.commandLineArg)) {
-      for (const arg of configObject.commandLineArg) {
-        if (commandLineArgs[arg.slice(2)] !== undefined) {
-          return commandLineArgs[arg.slice(2)]
+  // start looping through sources list
+  for (const key in sources) {
+    const source = sources[key]
+
+    // handle command line args
+    if (source.name === 'commandLineArgs') {
+      if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
+        if (isStringArray(configObject.commandLineArg)) {
+          for (const arg of configObject.commandLineArg) {
+            if (commandLineArgs[arg.slice(2)] !== undefined) {
+              value = commandLineArgs[arg.slice(2)]
+              break
+            }
+          }
+        } else {
+          if (commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
+            value = commandLineArgs[configObject.commandLineArg.slice(2)]
+            break
+          }
         }
       }
-    } else {
-      if (commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
-        return commandLineArgs[configObject.commandLineArg.slice(2)]
+    } else if (source.name === 'envVar') {
+      // handle environment variables
+      if (configObject.envVar !== undefined) {
+        if (isStringArray(configObject.envVar)) {
+          for (const envVar of configObject.envVar) {
+            if (process.env[envVar]) {
+              value = process.env[envVar]
+              break
+            }
+          }
+        } else {
+          if (process.env[configObject.envVar]) {
+            value = process.env[configObject.envVar]
+            break
+          }
+        }
+      }
+    } else if (source.name === 'deployConfig') {
+      // handle deploy config
+      const config = source.source
+
+      if (config && getFromConfig(config, path) !== undefined) {
+        value = getFromConfig(config, path)
+        break
+      }
+    } else if (source.name) {
+      // handle custom type
+      const config = source.source
+
+      if (getFromConfig(config, path) !== undefined) {
+        value = getFromConfig(config, path)
+        break
       }
     }
   }
 
-  // Try getting from Environment Variables first
-  if (configObject.envVar !== undefined) {
-    if (isStringArray(configObject.envVar)) {
-      for (const envVar of configObject.envVar) {
-        if (process.env[envVar]) {
-          return process.env[envVar]
-        }
-      }
-    } else {
-      if (process.env[configObject.envVar]) {
-        return process.env[configObject.envVar]
-      }
-    }
+  // if no value was set try to use the default
+  if (!value && configObject.default !== undefined) {
+    value = configObject.default
   }
 
-  // Then a deployment config file
-  if (deployConfig.get(path) !== undefined) {
-    return deployConfig.get(path)
+  // if value is still not set make it null
+  if (value === undefined) {
+    value = null
   }
 
-  // Then try to return the default value
-  if (configObject.default !== undefined) {
-    return configObject.default
-  }
-
-  // Otherwise, return null
-  return null
+  // return the value or null
+  return value
 }
 
 /**

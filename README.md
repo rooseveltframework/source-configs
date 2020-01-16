@@ -5,7 +5,7 @@
 
 A Node.js module that harvests app-level config values from command line arguments, environment variables, or config files based on a config schema you define within your app. This module was built and is maintained by the [Roosevelt web framework](https://github.com/rooseveltframework/roosevelt) [team](https://github.com/orgs/rooseveltframework/people), but it can be used independently of Roosevelt as well.
 
-Configs matching a given schema are sourced from the following locations in the following order of precedence:
+By default configs matching a given schema are sourced from the following locations in the following order of precedence:
 
 - Command line argument set in the schema via `commandLineArg`.
 - Environment variable set in the schema via `envVar`.
@@ -94,6 +94,82 @@ const config = sourceConfigs(schema)
 // access one of the configs
 console.log(config.websocket.port)
 ```
+
+### Custom configuration
+
+In addition to the above instantiation method, source-configs also accepts an optional configuration object that can be passed to the constructor as a second object like so:
+
+```javascript
+const sourceConfigs = require('source-configs')
+const schema = require('./your-schema-js-file.json')
+
+const config = sourceConfigs(schema, {
+  logging: true,
+  sources: [
+    { name: 'commandLineArgs' },
+    { name: 'envVar' },
+    { name: 'deployConfig' }
+  ]
+})
+```
+
+#### Available parameters
+
+- `logging`: Whether or not source-configs will log to console.
+
+  - Default: *[Boolean]* `true`.
+
+- `sources`: An array of sources that can be built-in or custom in order of priority.
+  - Default *[Array]*:
+
+    ```javascript
+      { name: 'commandLineArgs' },
+      { name: 'envVar' },
+      { name: 'deployConfig' }
+    ```
+
+  - You can also add custom sources this way by supplying a `source` object in addition to name.
+
+    ```javascript
+      { name: 'commandLineArgs' },
+      { name: 'envVar' },
+      { name: 'coolExtraConfig' source: { foo: 'bar', cool: 'object' } }
+    ```
+
+    - In this example `deployConfig` is ommitted from the list of sources.
+
+- `transform`: A function that can be used to mutate your config after it has been parsed and sourced but before it gets returned by source-configs.
+
+  - Example:
+
+    ```javascript
+    const sourceConfigs = require('source-configs')
+    const schema = require('./your-schema-js-file.json')
+
+    const config = sourceConfigs(schema, {
+      transform: (config, commandLineArgs) => {
+        // check for a cli flag that wouldn't normally translate into a config
+        if (commandLineArgs.switchPort === true) {
+          config.websocket.port = 43711
+        }
+
+        // return the config when done
+        return config
+      }
+    })
+
+    // access that config configs
+    console.log(config.websocket.port)
+    //=> 43711
+    ```
+
+  - API:
+
+  - `transform(config, commandLineArgs)`: Config transform method.
+
+    - `config`: The config after being parsed by source-configs.
+
+    - `commandLineArgs`: CLI flags as parsed by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
 
 ### Properties of source-configs module
 
