@@ -19,8 +19,8 @@ describe('environment variables', function () {
     sourceConfig(schema, {
       logging: false,
       sources: [
-        { name: 'custom', source: { apiRoute: '/api/c' } },
-        { name: 'commandLineArgs' }
+        { apiRoute: '/api/c' },
+        'command line'
       ]
     })
     assert.strictEqual(sourceConfig.configs.apiRoute, '/api/c')

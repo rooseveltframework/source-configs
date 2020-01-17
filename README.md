@@ -106,9 +106,10 @@ const schema = require('./your-schema-js-file.json')
 const config = sourceConfigs(schema, {
   logging: true,
   sources: [
-    { name: 'commandLineArgs' },
-    { name: 'envVar' },
-    { name: 'deployConfig' }
+    'command line',
+    'environment variable',
+    'deploy config',
+    { custom: 'object' }
   ]
 })
 ```
@@ -119,24 +120,30 @@ const config = sourceConfigs(schema, {
 
   - Default: *[Boolean]* `true`.
 
-- `sources`: An array of sources that can be built-in or custom in order of priority.
+- `sources`: An array of sources that can be a mix of built-in sources and custom source objects in order of priority.
   - Default *[Array]*:
 
     ```javascript
-      { name: 'commandLineArgs' },
-      { name: 'envVar' },
-      { name: 'deployConfig' }
+      'command line',
+      'environment variable',
+      'deploy config'
     ```
 
-  - You can also add custom sources this way by supplying a `source` object in addition to name.
+    - Note: built-in sources can also be referenced in multiple ways:
+
+      - Command line: `command line` or `commandLineArg`.
+      - Environment variable: `environment variable` or `envVar`
+      - Deploy config: `deploy config` or `deployConfig`
+
+  - You can also add custom sources this way by supplying an object to this array:
 
     ```javascript
-      { name: 'commandLineArgs' },
-      { name: 'envVar' },
-      { name: 'coolExtraConfig' source: { foo: 'bar', cool: 'object' } }
+      'command line',
+      'environment variable',
+      { custom: 'object' }
     ```
 
-    - In this example `deployConfig` is ommitted from the list of sources.
+    - In this example `deploy config` is ommitted from the list of sources and a custom object is the last item to source from before defaults.
 
 - `transform`: A function that can be used to mutate your config after it has been parsed and sourced but before it gets returned by source-configs.
 

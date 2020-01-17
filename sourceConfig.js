@@ -1,6 +1,7 @@
 const getFromConfig = require('./getFromConfig')
 const Logger = require('roosevelt-logger')
 let logger
+let deployConfig
 
 module.exports = sourceConfigs
 
@@ -16,9 +17,9 @@ function sourceConfigs (schema, config) {
 
   // set default source priority when unset
   config.sources = config.sources || [
-    { name: 'commandLineArgs' },
-    { name: 'envVar' },
-    { name: 'deployConfig' }
+    'command line',
+    'environment variable',
+    'deploy config'
   ]
 
   const params = {
@@ -31,8 +32,8 @@ function sourceConfigs (schema, config) {
   for (const key in config.sources) {
     const source = config.sources[key]
 
-    if (source.name === 'deployConfig') {
-      source.source = require('./getDeployConfig').config
+    if (source === 'deployConfig' || source === 'deploy config') {
+      deployConfig = require('./getDeployConfig').config
       break
     }
   }
@@ -133,7 +134,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
     const source = sources[key]
 
     // handle command line args
-    if (source.name === 'commandLineArgs') {
+    if (source === 'command line' || source.name === 'commandLineArg') {
       if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
         if (isStringArray(configObject.commandLineArg)) {
           for (const arg of configObject.commandLineArg) {
@@ -149,7 +150,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
           }
         }
       }
-    } else if (source.name === 'envVar') {
+    } else if (source === 'environment variable' || source.name === 'envVar') {
       // handle environment variables
       if (configObject.envVar !== undefined) {
         if (isStringArray(configObject.envVar)) {
@@ -166,20 +167,18 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
           }
         }
       }
-    } else if (source.name === 'deployConfig') {
+    } else if (source === 'deployConfig' || source === 'deploy config') {
       // handle deploy config
-      const config = source.source
 
-      if (config && getFromConfig(config, path) !== undefined) {
-        value = getFromConfig(config, path)
+      if (deployConfig && getFromConfig(deployConfig, path) !== undefined) {
+        value = getFromConfig(deployConfig, path)
         break
       }
-    } else if (source.name) {
+    } else if (typeof source === 'object') {
       // handle custom type
-      const config = source.source
 
-      if (getFromConfig(config, path) !== undefined) {
-        value = getFromConfig(config, path)
+      if (getFromConfig(source, path) !== undefined) {
+        value = getFromConfig(source, path)
         break
       }
     }
