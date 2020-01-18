@@ -172,11 +172,10 @@ const config = sourceConfigs(schema, {
 
   - API:
 
-  - `transform(config, commandLineArgs)`: Config transform method.
-
-    - `config`: The config after being parsed by source-configs.
-
-    - `commandLineArgs`: CLI flags as parsed by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
+    - `transform(config, commandLineArgs)`: Config transform method.
+  - `config`: The config after being parsed by source-configs.
+      
+  - `commandLineArgs`: CLI flags as parsed by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
 
 ### Properties of source-configs module
 
