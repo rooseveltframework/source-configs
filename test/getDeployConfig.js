@@ -11,7 +11,7 @@ describe('getDeployConfig', function () {
       deployConfigFile: path.join(`${__dirname}/config.json`)
     })
 
-    const { config } = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })
+    const config = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })()
 
     assert.deepStrictEqual(config, expectedConfig)
 
@@ -23,7 +23,7 @@ describe('getDeployConfig', function () {
       deployConfigFile: path.join(`${__dirname}/foo.json`)
     })
 
-    const { config } = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })
+    const config = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })()
 
     assert.strictEqual(config, null)
     done()
@@ -34,7 +34,7 @@ describe('getDeployConfig', function () {
       deployConfigFile: path.join(`${__dirname}/invalidConfig.json`)
     })
 
-    const { config } = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })
+    const config = proxyquire('../getDeployConfig', { 'yargs-parser': yargsParserStub })()
 
     assert.strictEqual(config, null)
     done()

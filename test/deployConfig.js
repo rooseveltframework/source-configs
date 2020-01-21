@@ -1,32 +1,28 @@
 /* eslint-env mocha */
 const assert = require('assert')
-
+const processArv = process.argv.slice()
 let sourceConfig
 let schema
 
-describe('Deploy config', function () {
-  beforeEach(function (done) {
+describe('Deploy config', () => {
+  before(() => {
+    process.argv = []
     process.env.DEPLOY_CONFIG = './test/config.json'
     sourceConfig = require('../sourceConfig')
     schema = require('./schema.json')
-    sourceConfig.configs = {}
-    sourceConfig.commandLineArgs = {}
     sourceConfig(schema)
-    done()
   })
 
-  afterEach(function (done) {
-    process.env.DEPLOY_CONFIG = ''
-    done()
+  after(() => {
+    delete process.env.DEPLOY_CONFIG
+    process.argv = processArv
   })
 
-  it('should get fields from the deploy config file', function (done) {
+  it('should get fields from the deploy config file', () => {
     assert.strictEqual(sourceConfig.configs.timeout, 400)
-    done()
   })
 
-  it('should default to the defaults if a field isn\'t in the deploy config file', function (done) {
+  it('should default to the defaults if a field isn\'t in the deploy config file', () => {
     assert.strictEqual(sourceConfig.configs.apiRoute, '/api/')
-    done()
   })
 })
