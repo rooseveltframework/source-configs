@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.3.1
+
+- Fixed broken push to npm.
+- Ensured each usage loads config in isolation.
+- Various dependencies updated.
+
 ## 0.3.0
 
 - Altered the source-configs usage in such a way that an optional configuration param can be passed which includes the following options:
