@@ -12,7 +12,7 @@ describe('getConfigFromPackage', function () {
   it('should grab a deploy file from package', function (done) {
     const key = path.join(projectRoot.path, 'package.json')
 
-    const { config } = proxyquire('../getDeployConfig', { [key]: { deployConfig: mockPackage.deployConfig } })
+    const config = proxyquire('../getDeployConfig', { [key]: { deployConfig: mockPackage.deployConfig } })()
 
     assert.deepStrictEqual(config, expectedConfig)
 
@@ -24,12 +24,12 @@ describe('getConfigFromPackage', function () {
 
     const key = path.join(projectRoot.path, 'package.json')
 
-    const { config } = proxyquire('../getDeployConfig', {
+    const config = proxyquire('../getDeployConfig', {
       [key]: { deployConfig: mockPackageHome.deployConfig },
       fs: {
         readFileSync: fsStub
       }
-    })
+    })()
 
     assert.deepStrictEqual(config, expectedConfig)
 

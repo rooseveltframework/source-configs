@@ -1,5 +1,7 @@
 const getFromConfig = require('./getFromConfig')
 const Logger = require('roosevelt-logger')
+const yargsParser = require('yargs-parser')
+const getDeployConfig = require('./getDeployConfig')
 let logger
 let deployConfig
 
@@ -28,12 +30,15 @@ function sourceConfigs (schema, config) {
     }
   }
 
+  // parse cli args
+  const commandLineArgs = yargsParser(process.argv.slice(2))
+
   // check that deployConfig is a source before requiring it
   for (const key in config.sources) {
     const source = config.sources[key]
 
     if (source === 'deployConfig' || source === 'deploy config') {
-      deployConfig = require('./getDeployConfig').config
+      deployConfig = getDeployConfig()
       break
     }
   }
@@ -46,21 +51,21 @@ function sourceConfigs (schema, config) {
     logger.disableLogging()
   }
 
-  sourceConfigs.configs = parseObject('', schema, sourceConfigs.commandLineArgs, config.sources)
+  // build the configuration
+  const configs = parseObject('', schema, commandLineArgs, config.sources)
 
   // run transformation on config if function is in use
   if (config.transform && typeof config.transform === 'function') {
-    sourceConfigs.configs = config.transform(sourceConfigs.configs, sourceConfigs.commandLineArgs)
+    sourceConfigs.configs = config.transform(configs, commandLineArgs)
   }
+
+  // expose features
+  sourceConfigs.configs = configs
+  sourceConfigs.commandLineArgs = commandLineArgs
+  sourceConfigs.yargsParser = yargsParser
 
   return sourceConfigs.configs
 }
-
-const yargsParser = require('yargs-parser')
-
-sourceConfigs.configs = {}
-sourceConfigs.commandLineArgs = yargsParser(process.argv.slice(2))
-sourceConfigs.yargsParser = yargsParser
 
 /**
  * Recursive function to go through config schema and generate configuration
@@ -176,7 +181,6 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
       }
     } else if (typeof source === 'object') {
       // handle custom type
-
       if (getFromConfig(source, path) !== undefined) {
         value = getFromConfig(source, path)
         break
@@ -185,7 +189,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
   }
 
   // if no value was set try to use the default
-  if (!value && configObject.default !== undefined) {
+  if (value === undefined && configObject.default !== undefined) {
     value = configObject.default
   }
 

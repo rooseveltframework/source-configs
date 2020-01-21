@@ -1,49 +1,43 @@
 /* eslint-env mocha */
 const assert = require('assert')
-
+const processArgv = process.argv.slice()
 let sourceConfig
 let schema
 
-describe('Enums', function () {
-  beforeEach(function (done) {
+describe('Enums', () => {
+  before(() => {
     sourceConfig = require('../sourceConfig')
     schema = require('./schema.json')
     sourceConfig.configs = {}
-    done()
   })
 
-  it('should pass with a valid enum', function (done) {
-    const commandLineArguments = {
-      'http-method': 'http'
-    }
-    sourceConfig.commandLineArgs = commandLineArguments
+  it('should pass with a valid enum', () => {
+    process.argv.push('--http-method')
+    process.argv.push('http')
 
     sourceConfig(schema)
     assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
-    done()
+
+    process.argv = processArgv
   })
 
-  it('should use fallback with invalid enum', function (done) {
-    const commandLineArguments = {
-      'http-method': 'httpz'
-    }
-
-    sourceConfig.commandLineArgs = commandLineArguments
+  it('should use fallback with invalid enum', () => {
+    process.argv.push('--http-method')
+    process.argv.push('httpz')
 
     sourceConfig(schema)
     assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
-    done()
+
+    process.argv = processArgv
   })
 
-  it('should use passed arg with invalid enum and no default', function (done) {
-    const commandLineArguments = {
-      'no-default': 'sometimes'
-    }
-
-    sourceConfig.commandLineArgs = commandLineArguments
+  it('should use passed arg with invalid enum and no default', () => {
+    process.argv.push('--no-default')
+    process.argv.push('sometimes')
 
     sourceConfig(schema)
     assert.deepStrictEqual(sourceConfig.configs.enumWithoutDefault, null)
-    done()
+
+    process.argv = processArgv
   })
 })
