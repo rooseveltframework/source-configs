@@ -148,6 +148,10 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
               break
             }
           }
+
+          if (value !== undefined) {
+            break
+          }
         } else {
           if (commandLineArgs[configObject.commandLineArg.slice(2)] !== undefined) {
             value = commandLineArgs[configObject.commandLineArg.slice(2)]
@@ -164,6 +168,10 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
               value = process.env[envVar]
               break
             }
+          }
+
+          if (value !== undefined) {
+            break
           }
         } else {
           if (process.env[configObject.envVar]) {
