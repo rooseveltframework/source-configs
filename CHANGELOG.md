@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.3.2
+
+- Fixed a bug where config value doesn't source properly.
+- Various dependencies updated.
+
 ## 0.3.1
 
 - Fixed broken push to npm.
