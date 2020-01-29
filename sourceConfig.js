@@ -24,10 +24,18 @@ function sourceConfigs (schema, config) {
     'deploy config'
   ]
 
+  // setup the logger
   const params = {
     params: {
       disable: ['SILENT_MODE'] // disable logging during Mocha tests
     }
+  }
+
+  logger = new Logger(params)
+
+  // disable logging if config turns it off
+  if (config.logging === false) {
+    logger.disableLogging()
   }
 
   // parse cli args
@@ -38,17 +46,9 @@ function sourceConfigs (schema, config) {
     const source = config.sources[key]
 
     if (source === 'deployConfig' || source === 'deploy config') {
-      deployConfig = getDeployConfig()
+      deployConfig = getDeployConfig(logger)
       break
     }
-  }
-
-  // setup the logger
-  logger = new Logger(params)
-
-  // disable logging if config turns it off
-  if (config.logging === false) {
-    logger.disableLogging()
   }
 
   // build the configuration
