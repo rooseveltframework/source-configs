@@ -24,7 +24,7 @@
   "dependencies": {
     "app-root-path": "~3.0.0",
     "roosevelt-logger": "~0.2.2",
-    "yargs-parser": "~17.0.0"
+    "yargs-parser": "~17.1.0"
   },
   "devDependencies": {
     "c8": "~7.1.0",
