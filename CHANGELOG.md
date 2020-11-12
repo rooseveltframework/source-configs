@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.3.4
+
+- Fixed a bug with command line args. https://github.com/rooseveltframework/source-configs/issues/198
+- Various dependencies updated.
+
 ## 0.3.3
 
 - Fixed a bug where disabling the logger didn't disable all logs.
