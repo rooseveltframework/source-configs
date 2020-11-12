@@ -24,7 +24,7 @@
     "default": "String"
   },
   "commandLineArgArray": {
-    "commandLineArg": ["--arg-array", "--a"],
+    "commandLineArg": ["--arg-array", "-a"],
     "desc": "Example array of command line args",
     "default": ""
   },
