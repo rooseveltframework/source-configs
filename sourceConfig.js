@@ -142,10 +142,14 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
     if (source === 'command line' || source.name === 'commandLineArg') {
       if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
         if (isStringArray(configObject.commandLineArg)) {
-          for (const arg of configObject.commandLineArg) {
-            if (commandLineArgs[arg.slice(2)] !== undefined) {
-              value = commandLineArgs[arg.slice(2)]
-              break
+          const parsedArgs = yargsParser(configObject.commandLineArg)
+
+          for (const arg in parsedArgs) {
+            if (arg !== '_') {
+              if (commandLineArgs[arg] !== undefined) {
+                value = commandLineArgs[arg]
+                break
+              }
             }
           }
 
