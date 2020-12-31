@@ -27,7 +27,7 @@
     "yargs-parser": "~20.2.4"
   },
   "devDependencies": {
-    "c8": "~7.3.5",
+    "c8": "~7.4.0",
     "codecov": "~3.8.1",
     "cross-env": "~7.0.2",
     "eslint": "~7.15.0",
