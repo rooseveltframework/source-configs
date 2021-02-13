@@ -30,7 +30,7 @@
     "c8": "~7.5.0",
     "codecov": "~3.8.1",
     "cross-env": "~7.0.3",
-    "eslint": "~7.19.0",
+    "eslint": "~7.20.0",
     "eslint-plugin-mocha": "~8.0.0",
     "lint-staged": "~10.5.4",
     "mocha": "~8.2.1",
