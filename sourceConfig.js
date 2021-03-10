@@ -59,10 +59,44 @@ function sourceConfigs (schema, config) {
     sourceConfigs.configs = config.transform(configs, commandLineArgs)
   }
 
+  const printHelp = function () {
+    let menu = 'Options:\n'
+    for (const configName in schema) {
+      const item = schema[configName]
+      if (item.commandLineArg !== undefined) {
+        let line = '  '
+        if (isStringArray(item.commandLineArg)) {
+          const args = item.commandLineArg.slice()
+          args.sort((a, b) => {
+            return a.length - b.length
+          })
+          line += args[0]
+          for (const arg of args.slice(1)) {
+            line += ', ' + arg
+          }
+        } else {
+          line += item.commandLineArg
+        }
+        if (line.length < 30) {
+          line += ' '.repeat(30 - line.length)
+        }
+        if (item.desc !== undefined) {
+          line += item.desc
+        }
+        if (item.default !== undefined) {
+          line += ` (default: ${item.default})`
+        }
+        menu += line + '\n'
+      }
+    }
+    return menu
+  }
+
   // expose features
   sourceConfigs.configs = configs
   sourceConfigs.commandLineArgs = commandLineArgs
   sourceConfigs.yargsParser = yargsParser
+  sourceConfigs.printHelp = printHelp
 
   return sourceConfigs.configs
 }
