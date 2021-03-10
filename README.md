@@ -183,3 +183,4 @@ In addition to its constructor, source-configs exposes the following properties:
 - `configs` *[Object]*: The resulting configs after running source-config's constructor.
 - `commandLineArgs` *[Array]*: All command line arguments passed to your application, including those not listened for by your schema. Powered by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
 - `yargsParser` *[Function]*: The instance of [yargs-parser](https://www.npmjs.com/package/yargs-parser) that source-configs used to compile all command line arguments passed to your application.
+- `printHelp` *[Function]*: A function which will generate a help menu describing the command line arguments defined in the schema.
