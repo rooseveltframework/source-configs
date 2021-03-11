@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.3.5
+
+- Added a function to make it easy for developers to add a `-h` or `--help` command to their applications that will print a summary of supported command line options.
+- Dropped support for Node 12 and below.
+- Various dependencies updated.
+
 ## 0.3.4
 
 - Fixed a bug with command line args. https://github.com/rooseveltframework/source-configs/issues/198

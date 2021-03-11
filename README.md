@@ -44,7 +44,7 @@ Schemas support the following metadata for each configurable property in order t
 - `commandLineArg` *[String|Array<String>]*: Command line argument(s) to listen for that will set this config. If not set, source-configs will not listen for command line arguments to set the value for this config.
 - `envVar` *[String|Array<String>]*: Environment variable(s) to listen for that will set this config. If not set, source-configs will not listen for an environment variable to set the value for this config.
 
-### User Defined Functions
+### User-defined functions
 
 Additionally, a schema can be a function which has the parent config passed to it as the first argument. To do this create a key/value pair within the schema object:
  - If the schema is stored in a `.js` file, set the key as the desired function name and the value as the function.
@@ -183,4 +183,4 @@ In addition to its constructor, source-configs exposes the following properties:
 - `configs` *[Object]*: The resulting configs after running source-config's constructor.
 - `commandLineArgs` *[Array]*: All command line arguments passed to your application, including those not listened for by your schema. Powered by [yargs-parser](https://www.npmjs.com/package/yargs-parser).
 - `yargsParser` *[Function]*: The instance of [yargs-parser](https://www.npmjs.com/package/yargs-parser) that source-configs used to compile all command line arguments passed to your application.
-- `printHelp` *[Function]*: A function which will generate a help menu describing the command line arguments defined in the schema.
+- `printHelp` *[Function]*: A function which will generate a help menu describing the command line arguments defined in the schema. Useful for if you want to define a `-h` or `--help` command line argument to print all available supported command line arguments. Just print `console.log(config.printHelp())` to print that information to your users.
