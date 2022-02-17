@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.3.6
+
+- Various dependencies updated.
+  - Migrated colors to @colors/colors
+
 ## 0.3.5
 
 - Added a function to make it easy for developers to add a `-h` or `--help` command to their applications that will print a summary of supported command line options.
