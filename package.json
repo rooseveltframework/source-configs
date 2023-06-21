@@ -18,7 +18,7 @@
   "license": "CC-BY-4.0",
   "main": "sourceConfig.js",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "app-root-path": "3.1.0",
