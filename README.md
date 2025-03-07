@@ -19,27 +19,27 @@ Here's a simple example declaring that our application will use a WebSocket with
 const sourceConfigs = require('source-configs')
 const schema = require({
   websocket: {
-  host: {
-    description: 'WebSocket host URL',
-    default: 'localhost',
-    commandLineArg: ['--websocket-host-url', '--ws-host', '-h'],
-    envVar: ['WEBSOCKET_HOST_URL', 'WS_HOST']
-  },
-  port: {
-    description: 'WebSocket port',
-    default: 8081,
-    commandLineArg: ['--ws-port', '-p'],
-    envVar: 'WS_PORT'
-  },
-  protocol: {
-    description: 'Which WebSocket protocol',
-    values: ['ws', 'wss'],
-    commandLineArg: '--ws-protocol',
-    envVar: 'WS_PROTOCOL'
-  },
-  url: 'user-defined function'
-}
-})
+    host: {
+      description: 'WebSocket host URL',
+      default: 'localhost',
+      commandLineArg: ['--websocket-host-url', '--ws-host', '-h'],
+      envVar: ['WEBSOCKET_HOST_URL', 'WS_HOST']
+    },
+    port: {
+      description: 'WebSocket port',
+      default: 8081,
+      commandLineArg: ['--ws-port', '-p'],
+      envVar: 'WS_PORT'
+    },
+    protocol: {
+      description: 'Which WebSocket protocol',
+      values: ['ws', 'wss'],
+      commandLineArg: '--ws-protocol',
+      envVar: 'WS_PROTOCOL'
+    },
+    url: 'user-defined function'
+  }
+)
 
 // define the user-defined function above
 schema.websocket.url = (config) => config.protocol + '://' + config.host + ':' + config.port
