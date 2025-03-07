@@ -39,7 +39,7 @@ const schema = require({
     },
     url: 'user-defined function'
   }
-)
+})
 
 // define the user-defined function above
 schema.websocket.url = (config) => config.protocol + '://' + config.host + ':' + config.port
