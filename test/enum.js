@@ -6,7 +6,7 @@ let schema
 
 describe('Enums', () => {
   before(() => {
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
     schema = require('./schema.json')
     sourceConfig.configs = {}
   })

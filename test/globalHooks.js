@@ -8,9 +8,7 @@ before(function (done) {
 })
 
 beforeEach(function (done) {
-  // Clear out getDeployConfig.js and sourceConfig.js from require cache before every test
-  delete require.cache[require.resolve('../getDeployConfig')]
-  delete require.cache[require.resolve('../sourceConfig')]
+  delete require.cache[require.resolve('../source-configs')]
 
   done()
 })

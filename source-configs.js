@@ -1,11 +1,6 @@
-const getFromConfig = require('./getFromConfig')
 const Logger = require('roosevelt-logger')
 const yargsParser = require('yargs-parser')
-const getDeployConfig = require('./getDeployConfig')
 let logger
-let deployConfig
-
-module.exports = sourceConfigs
 
 function sourceConfigs (schema, config) {
   /**
@@ -20,8 +15,7 @@ function sourceConfigs (schema, config) {
   // set default source priority when unset
   config.sources = config.sources || [
     'command line',
-    'environment variable',
-    'deploy config'
+    'environment variable'
   ]
 
   // setup the logger
@@ -40,16 +34,6 @@ function sourceConfigs (schema, config) {
 
   // parse cli args
   const commandLineArgs = yargsParser(process.argv.slice(2))
-
-  // check that deployConfig is a source before requiring it
-  for (const key in config.sources) {
-    const source = config.sources[key]
-
-    if (source === 'deployConfig' || source === 'deploy config') {
-      deployConfig = getDeployConfig(logger)
-      break
-    }
-  }
 
   // build the configuration
   const configs = parseObject('', schema, commandLineArgs, config.sources)
@@ -92,13 +76,40 @@ function sourceConfigs (schema, config) {
     return menu
   }
 
+  const safelyPrintSchema = function () {
+    const postProcessedConfig = {}
+    for (const key in configs) {
+      const val = configs[key]
+      if (schema[key]?.secret) postProcessedConfig[key] = '********'
+      else postProcessedConfig[key] = val
+    }
+    return postProcessedConfig
+  }
+
   // expose features
   sourceConfigs.configs = configs
   sourceConfigs.commandLineArgs = commandLineArgs
   sourceConfigs.yargsParser = yargsParser
   sourceConfigs.printHelp = printHelp
+  sourceConfigs.safelyPrintSchema = safelyPrintSchema
 
   return sourceConfigs.configs
+}
+
+/**
+ * method to grab items a from configuration object
+ * @module getFromConfig
+ */
+function getFromConfig (data, path) {
+  let pointer = data
+  const sections = path.split('.')
+  let i = 0
+  while (i < sections.length) {
+    pointer = pointer[sections[i]]
+    if (pointer === undefined) break
+    i++
+  }
+  return pointer
 }
 
 /**
@@ -116,9 +127,9 @@ function parseObject (path, obj, commandLineArgs, sources) {
   for (const key in obj) {
     const newPath = path === '' ? key : path + '.' + key
 
-    // Check if a user defined function has been implemented before calling init. if not, notify the user on such.
-    if (obj[key] === 'user defined function') {
-      logger.error(`Error: Expected user defined function to be implemented in app level code for schema.${newPath}...`)
+    // Check if a user-defined function has been implemented before calling init. if not, notify the user on such.
+    if (obj[key] === 'user defined function' || obj[key] === 'user-defined function') {
+      logger.error(`Error: Expected user-defined function to be implemented in app level code for schema.${newPath}...`)
       logger.error('Setting field to null')
       config[key] = null
       continue
@@ -131,7 +142,7 @@ function parseObject (path, obj, commandLineArgs, sources) {
     if (!isPrimitive(obj[key])) {
       config[key] = parseObject(newPath, obj[key], commandLineArgs, sources)
     } else {
-      // Grab the config result from Command Line Args, Environment Variables, Deploy Config file, or defaults
+      // Grab the config result from Command Line Args, Environment Variables, or defaults
       let configResult = checkConfig(newPath, obj[key], commandLineArgs, sources)
 
       // If value is an enum, make sure it is valid
@@ -218,13 +229,6 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
           }
         }
       }
-    } else if (source === 'deployConfig' || source === 'deploy config') {
-      // handle deploy config
-
-      if (deployConfig && getFromConfig(deployConfig, path) !== undefined) {
-        value = getFromConfig(deployConfig, path)
-        break
-      }
     } else if (typeof source === 'object') {
       // handle custom type
       if (getFromConfig(source, path) !== undefined) {
@@ -239,9 +243,9 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
     value = configObject.default
   }
 
-  // if value is still not set make it null
+  // if value is still not set make it the config's name
   if (value === undefined) {
-    value = null
+    value = path
   }
 
   // return the value or null
@@ -317,3 +321,5 @@ function isPrimitive (configObject) {
 function isStringArray (configResult) {
   return Array.isArray(configResult) && (typeof configResult[0]) === 'string'
 }
+
+module.exports = sourceConfigs

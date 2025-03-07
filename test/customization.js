@@ -11,7 +11,7 @@ describe('custom configuration', function () {
     process.argv.push('/api/b')
 
     schema = require('./schema.json')
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
   })
 
   after(() => {

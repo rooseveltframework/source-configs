@@ -6,7 +6,7 @@ let schema
 
 describe('Command Line Arguments', () => {
   before(function () {
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
     sourceConfig.configs = {}
     schema = require('./schema.json')
 
@@ -23,6 +23,7 @@ describe('Command Line Arguments', () => {
   -a, --arg-array             Example array of command line args (default: )
   --http-method               example enum (default: http)
   --no-default                enum with no default
+  --swd, --string-no-default  string with no default
 `
     assert.deepStrictEqual(sourceConfig.printHelp(), resultingMenu)
   })

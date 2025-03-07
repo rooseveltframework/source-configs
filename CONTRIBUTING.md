@@ -10,7 +10,7 @@
 
 If you are a maintainer of this module, please follow the following release procedure:
 
-- Merge all desired pull requests into master.
+- Merge all desired pull requests into main.
 - Bump `package.json` to a new version and run `npm i` to generate a new `package-lock.json`.
 - Alter CHANGELOG "Next version" section and stamp it with the new version.
 - Paste contents of CHANGELOG into new version commit.

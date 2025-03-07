@@ -44,6 +44,10 @@
     "desc": "enum with no default",
     "values": ["yes", "no"]
   },
+  "stringWithoutDefault": {
+    "commandLineArg": ["--string-no-default", "--swd"],
+    "desc": "string with no default"
+  },
   "webUrlObj": {
     "httpMethod": {
       "commandLineArg": "--web-http-method",
@@ -60,5 +64,11 @@
       "desc": "web port",
       "default": 8081
     }
+  },
+  "sensitiveInfo": {
+    "envVar": "SENSITIVE_INFO",
+    "desc": "sensitive info",
+    "default": "default password",
+    "secret": true
   }
 }

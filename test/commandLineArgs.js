@@ -26,7 +26,7 @@ describe('Command Line Arguments', () => {
     process.argv.push('-a')
     process.argv.push('foobar')
 
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
     sourceConfig.configs = {}
     schema = require('./schema.json')
 
