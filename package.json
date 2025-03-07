@@ -1,6 +1,6 @@
 {
   "name": "source-configs",
-  "description": "A Node.js module that harvests app-level config values from command line arguments, environment variables, or config files based on a config schema you define within your app.",
+  "description": "🎛 A Node.js module that allows you to declaratively define a hierarchy of configuration values for your app from command line arguments, environment variables, or defaults based on a JSON schema you define within your app.",
   "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
   "contributors": [
     {
@@ -8,15 +8,13 @@
       "url": "https://github.com/rooseveltframework/source-configs/graphs/contributors"
     }
   ],
-  "version": "0.3.6",
+  "version": "1.0.0",
   "files": [
-    "getDeployConfig.js",
-    "getFromConfig.js",
-    "sourceConfig.js"
+    "source-configs.js"
   ],
   "homepage": "https://github.com/rooseveltframework/source-configs",
   "license": "CC-BY-4.0",
-  "main": "sourceConfig.js",
+  "main": "source-configs.js",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -26,32 +24,18 @@
     "yargs-parser": "21.1.1"
   },
   "devDependencies": {
-    "c8": "10.1.2",
-    "codecov": "3.8.3",
+    "c8": "10.1.3",
     "cross-env": "7.0.3",
-    "eslint": "8.57.0",
-    "eslint-plugin-mocha": "10.5.0",
-    "mocha": "10.8.2",
+    "mocha": "11.1.0",
     "proxyquire": "2.1.3",
     "sinon": "19.0.2",
     "standard": "17.1.2"
   },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 2018
-    },
-    "plugins": [
-      "mocha"
-    ],
-    "rules": {
-      "mocha/no-exclusive-tests": "error"
-    }
-  },
   "scripts": {
-    "codecov": "codecov",
-    "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 25000 test",
-    "lint": "standard && eslint ./test",
+    "coverage": "cross-env SILENT_MODE=true c8 --reporter=text --reporter=lcov mocha --timeout 25000 test",
+    "lint": "standard",
     "test": "cross-env SILENT_MODE=true mocha --recursive --timeout 10000 test",
+    "test-log": "mocha --recursive --timeout 10000 test",
     "test-debug": "mocha --inspect-brk --timeout 10000 test"
   },
   "repository": {

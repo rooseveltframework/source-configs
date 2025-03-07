@@ -4,6 +4,14 @@
 
 - Put your changes here...
 
+## 1.0.0
+
+- Breaking: Changed default behavior for configs with no default value to populate the config value's name instead of `null` by default.
+- Breaking: Removed deployConfig feature.
+- Added new `secret` schema metadata feature to declare certain configs (e.g. passwords or API keys) sensitive.
+- Added `safelyPrintSchema` method to return schema with `secret` configs redacted.
+- Updated dependencies.
+
 ## 0.3.6
 
 - Various dependencies updated.

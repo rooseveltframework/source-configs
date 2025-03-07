@@ -4,17 +4,17 @@ const assert = require('assert')
 let schema
 let sourceConfig
 
-describe('User defined functions', function () {
+describe('User-defined functions', function () {
   beforeEach(function (done) {
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
     sourceConfig.configs = {}
     schema = {
-      userFunction: 'user defined function'
+      userFunction: 'user-defined function'
     }
     done()
   })
 
-  it('should expect user defined function is true', function (done) {
+  it('should expect user-defined function is true', function (done) {
     schema.userFunction = function () {
       return true
     }
@@ -25,7 +25,7 @@ describe('User defined functions', function () {
     done()
   })
 
-  it('should expect user defined function is undefined', function (done) {
+  it('should expect user-defined function is undefined', function (done) {
     sourceConfig(schema)
 
     assert.deepStrictEqual(sourceConfig.configs.userFunction, null)

@@ -8,7 +8,7 @@ describe('environment variables', () => {
   before(() => {
     process.argv = []
     schema = require('./schema.json')
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
   })
 
   after(() => {

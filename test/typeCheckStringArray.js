@@ -6,7 +6,7 @@ let sourceConfig
 
 describe('Array of Strings Type Check', function () {
   beforeEach(function (done) {
-    sourceConfig = require('../sourceConfig')
+    sourceConfig = require('../source-configs')
     sourceConfig.configs = {}
     schema = {
       allStrings: {
