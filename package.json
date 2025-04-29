@@ -10,7 +10,8 @@
   ],
   "version": "1.0.0",
   "files": [
-    "source-configs.js"
+    "source-configs.js",
+    "*.md"
   ],
   "homepage": "https://github.com/rooseveltframework/source-configs",
   "license": "CC-BY-4.0",
