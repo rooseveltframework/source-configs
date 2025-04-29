@@ -1,9 +1,3 @@
-# Changelog
-
-## Next version
-
-- Put your changes here...
-
 ## 1.0.0
 
 - Breaking: Changed default behavior for configs with no default value to populate the config value's name instead of `null` by default.
