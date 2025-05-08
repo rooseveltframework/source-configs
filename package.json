@@ -13,7 +13,7 @@
     "source-configs.js",
     "*.md"
   ],
-  "homepage": "https://github.com/rooseveltframework/source-configs",
+  "homepage": "https://rooseveltframework.org/docs/source-configs/latest",
   "license": "CC-BY-4.0",
   "main": "source-configs.js",
   "engines": {
