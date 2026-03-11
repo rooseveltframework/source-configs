@@ -213,7 +213,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
       if (configObject.envVar !== undefined) {
         if (isStringArray(configObject.envVar)) {
           for (const envVar of configObject.envVar) {
-            if (process.env[envVar]) {
+            if (Object.hasOwn(process.env, envVar)) {
               value = process.env[envVar]
               break
             }
