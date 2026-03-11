@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Fixed a bug that prevented environment variables from being set to empty strings, which should be considered valid, truthy values. Previously they were erroneously considered invalid, falsey values.
+- Updated dependencies.
+
 ## 1.0.0
 
 - Breaking: Changed default behavior for configs with no default value to populate the config value's name instead of `null` by default.

@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/source-configs/graphs/contributors"
     }
   ],
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "source-configs.js",
     "*.md"
@@ -29,7 +29,7 @@
     "cross-env": "10.1.0",
     "mocha": "11.7.5",
     "proxyquire": "2.1.3",
-    "sinon": "21.0.1",
+    "sinon": "21.0.2",
     "standard": "17.1.2"
   },
   "scripts": {
