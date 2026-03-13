@@ -223,7 +223,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
             break
           }
         } else {
-          if (process.env[configObject.envVar]) {
+          if (Object.hasOwn(process.env, configObject.envVar)) {
             value = process.env[configObject.envVar]
             break
           }
