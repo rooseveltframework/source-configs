@@ -1,3 +1,8 @@
+## 1.0.2
+
+- Issued an additional fix for the previous bug that prevented environment variables from being set to empty strings, which should be considered valid, truthy values. Previously there were still scenarios where they were erroneously considered invalid, falsey values.
+- Updated dependencies.
+
 ## 1.0.1
 
 - Fixed a bug that prevented environment variables from being set to empty strings, which should be considered valid, truthy values. Previously they were erroneously considered invalid, falsey values.
