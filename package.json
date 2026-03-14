@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/source-configs/graphs/contributors"
     }
   ],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "files": [
     "source-configs.js",
     "*.md"
