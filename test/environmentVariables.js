@@ -1,6 +1,7 @@
-/* eslint-env mocha */
-const assert = require('assert')
+const { describe, it, before, after } = require('node:test')
+const assert = require('node:assert')
 const processArgv = process.argv.slice()
+
 let sourceConfig
 let schema
 
@@ -18,8 +19,7 @@ describe('environment variables', () => {
   it('should take a plain environment variable', () => {
     process.env.API_ROUTE = '/api'
 
-    sourceConfig(schema)
-    assert.strictEqual(sourceConfig.configs.apiRoute, '/api')
+    assert.strictEqual(sourceConfig(schema).apiRoute, '/api')
 
     delete process.env.API_ROUTE
   })
@@ -27,8 +27,7 @@ describe('environment variables', () => {
   it('should map a number string to an int', () => {
     process.env.TIMEOUT = '20'
 
-    sourceConfig(schema)
-    assert.strictEqual(sourceConfig.configs.timeout, 20)
+    assert.strictEqual(sourceConfig(schema).timeout, 20)
 
     delete process.env.TIMEOUT
   })
@@ -36,8 +35,7 @@ describe('environment variables', () => {
   it('should map a bool string to a bool', () => {
     process.env.EX_BOOL = 'true'
 
-    sourceConfig(schema)
-    assert.strictEqual(sourceConfig.configs.exBool, true)
+    assert.strictEqual(sourceConfig(schema).exBool, true)
 
     delete process.env.EX_BOOL
   })
@@ -45,14 +43,12 @@ describe('environment variables', () => {
   it('should support arrays of environment variables', () => {
     process.env.FOO = 10
 
-    sourceConfig(schema)
-    assert.strictEqual(sourceConfig.configs.envVarArray, 10)
+    assert.strictEqual(sourceConfig(schema).envVarArray, 10)
 
     delete process.env.FOO
   })
 
   it('should default when not passed in anything', () => {
-    sourceConfig(schema)
-    assert.strictEqual(sourceConfig.configs.exString, 'String')
+    assert.strictEqual(sourceConfig(schema).exString, 'String')
   })
 })

@@ -1,34 +1,26 @@
-/* eslint-env mocha */
-const assert = require('assert')
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert')
 
 let schema
 let sourceConfig
 
 describe('User-defined functions', function () {
-  beforeEach(function (done) {
+  beforeEach(function () {
     sourceConfig = require('../source-configs')
-    sourceConfig.configs = {}
     schema = {
       userFunction: 'user-defined function'
     }
-    done()
   })
 
-  it('should expect user-defined function is true', function (done) {
+  it('should expect user-defined function is true', function () {
     schema.userFunction = function () {
       return true
     }
 
-    sourceConfig(schema)
-
-    assert.deepStrictEqual(sourceConfig.configs.userFunction, true)
-    done()
+    assert.deepStrictEqual(sourceConfig(schema).userFunction, true)
   })
 
-  it('should expect user-defined function is undefined', function (done) {
-    sourceConfig(schema)
-
-    assert.deepStrictEqual(sourceConfig.configs.userFunction, null)
-    done()
+  it('should expect user-defined function is undefined', function () {
+    assert.deepStrictEqual(sourceConfig(schema).userFunction, null)
   })
 })

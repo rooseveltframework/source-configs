@@ -1,5 +1,5 @@
-/* eslint-env mocha */
-const assert = require('assert')
+const { describe, it, before, after } = require('node:test')
+const assert = require('node:assert')
 const processArgv = process.argv.slice()
 
 const commandLineArguments = {
@@ -9,8 +9,7 @@ const commandLineArguments = {
   a: 'foobar'
 }
 
-let sourceConfig
-let schema
+let config
 
 describe('Command Line Arguments', () => {
   before(() => {
@@ -26,11 +25,7 @@ describe('Command Line Arguments', () => {
     process.argv.push('-a')
     process.argv.push('foobar')
 
-    sourceConfig = require('../source-configs')
-    sourceConfig.configs = {}
-    schema = require('./schema.json')
-
-    sourceConfig(schema)
+    config = require('../source-configs')(require('./schema.json'))
   })
 
   after(() => {
@@ -38,22 +33,22 @@ describe('Command Line Arguments', () => {
   })
 
   it('should expect an object parsed beforehand', () => {
-    assert.deepStrictEqual(sourceConfig.configs.apiRoute, commandLineArguments['api-route'])
+    assert.deepStrictEqual(config.apiRoute, commandLineArguments['api-route'])
   })
 
   it('will parse strings to ints', () => {
-    assert.deepStrictEqual(sourceConfig.configs.timeout, 4000)
+    assert.deepStrictEqual(config.timeout, 4000)
   })
 
   it('will parse strings to bools', () => {
-    assert.deepStrictEqual(sourceConfig.configs.exBool, true)
+    assert.deepStrictEqual(config.exBool, true)
   })
 
   it('will work with an array of command line args', () => {
-    assert.deepStrictEqual(sourceConfig.configs.commandLineArgArray, 'foobar')
+    assert.deepStrictEqual(config.commandLineArgArray, 'foobar')
   })
 
   it('will return the default if a field is not in a command line argument', () => {
-    assert.deepStrictEqual(sourceConfig.configs.exString, 'String')
+    assert.deepStrictEqual(config.exString, 'String')
   })
 })

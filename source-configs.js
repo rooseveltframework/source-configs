@@ -3,12 +3,6 @@ const yargsParser = require('yargs-parser')
 let logger
 
 function sourceConfigs (schema, config) {
-  /**
-   * when a custom config source doesn't supply an object...
-   * source the config from the schema instead if it exists
-   * otherwise ignore it
-   */
-
   // ensure config is an object
   config = config || {}
 
@@ -36,11 +30,19 @@ function sourceConfigs (schema, config) {
   const commandLineArgs = yargsParser(process.argv.slice(2))
 
   // build the configuration
-  const configs = parseObject('', schema, commandLineArgs, config.sources)
+  let configs = parseObject('', schema, commandLineArgs, config.sources)
+
+  // warn about configs supplied by a custom source object that the schema doesn't define, e.g. misspellings
+  const unknownConfigs = config.suggestions === false ? [] : findUnknownConfigs(schema, config.sources)
+  for (const unknown of unknownConfigs) {
+    if (unknown.suggestions.length) logger.warn('Warning: Trying to set config.' + unknown.path + ', but the schema does not define that config. Did you mean: ' + unknown.suggestions.join(', ') + '?')
+    else logger.warn('Warning: Trying to set config.' + unknown.path + ', but the schema does not define that config.')
+  }
 
   // run transformation on config if function is in use
+  // the transform's return value replaces the config, so a transform that builds a new object works as well as one that mutates the object it was given
   if (config.transform && typeof config.transform === 'function') {
-    sourceConfigs.configs = config.transform(configs, commandLineArgs)
+    configs = config.transform(configs, commandLineArgs)
   }
 
   const printHelp = function () {
@@ -49,7 +51,7 @@ function sourceConfigs (schema, config) {
       const item = schema[configName]
       if (item.commandLineArg !== undefined) {
         let line = '  '
-        if (isStringArray(item.commandLineArg)) {
+        if (isNameList(item.commandLineArg)) {
           const args = item.commandLineArg.slice()
           args.sort((a, b) => {
             return a.length - b.length
@@ -64,8 +66,10 @@ function sourceConfigs (schema, config) {
         if (line.length < 30) {
           line += ' '.repeat(30 - line.length)
         }
-        if (item.desc !== undefined) {
-          line += item.desc
+        // description is the documented name for this, but desc has always worked here, so both are accepted
+        const description = typeof item.description === 'string' ? item.description : item.desc
+        if (description !== undefined) {
+          line += description
         }
         if (item.default !== undefined) {
           line += ` (default: ${item.default})`
@@ -86,14 +90,19 @@ function sourceConfigs (schema, config) {
     return postProcessedConfig
   }
 
-  // expose features
-  sourceConfigs.configs = configs
-  sourceConfigs.commandLineArgs = commandLineArgs
-  sourceConfigs.yargsParser = yargsParser
-  sourceConfigs.printHelp = printHelp
-  sourceConfigs.safelyPrintSchema = safelyPrintSchema
+  // expose the features on the config this call produced, so that two libraries sourcing configs in the same process each keep their own
+  // they are non-enumerable so that they stay out of the config's own keys when it is iterated or serialized
+  const features = { commandLineArgs, yargsParser, printHelp, safelyPrintSchema, unknownConfigs }
+  if (typeof configs === 'object' && configs !== null) {
+    for (const name in features) {
+      // a schema is free to name a config after one of these, and the config it asked for wins
+      if (!Object.hasOwn(configs, name)) {
+        Object.defineProperty(configs, name, { value: features[name], writable: true, configurable: true })
+      }
+    }
+  }
 
-  return sourceConfigs.configs
+  return configs
 }
 
 /**
@@ -105,6 +114,9 @@ function getFromConfig (data, path) {
   const sections = path.split('.')
   let i = 0
   while (i < sections.length) {
+    // a value that isn't an object has nothing deeper to walk into, so this source doesn't supply the config
+    // null is the case worth spelling out: reading a property off it throws rather than coming back undefined
+    if (pointer === null || typeof pointer !== 'object') return undefined
     pointer = pointer[sections[i]]
     if (pointer === undefined) break
     i++
@@ -150,9 +162,9 @@ function parseObject (path, obj, commandLineArgs, sources) {
         configResult = checkEnum(newPath, configResult, obj[key])
       }
 
-      // Check if it's an array, and if it has strings as values, typecast them
-      if (isStringArray(configResult)) {
-        configResult = configResult.map(arrayEntry => typeCastEntry(arrayEntry))
+      // Typecast the strings in an array, e.g. ['2', 'false'] -> [2, false], leaving entries that are not strings as they are
+      if (Array.isArray(configResult)) {
+        configResult = configResult.map(arrayEntry => typeof arrayEntry === 'string' ? typeCastEntry(arrayEntry) : arrayEntry)
       }
 
       // Typecast in case of strings that could be numbers or booleans ('2' -> 2, 'false' -> false)
@@ -180,13 +192,11 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
   let value
 
   // start looping through sources list
-  for (const key in sources) {
-    const source = sources[key]
-
+  for (const source of sources) {
     // handle command line args
     if (source === 'command line' || source.name === 'commandLineArg') {
       if (commandLineArgs !== undefined && configObject.commandLineArg !== undefined) {
-        if (isStringArray(configObject.commandLineArg)) {
+        if (isNameList(configObject.commandLineArg)) {
           const parsedArgs = yargsParser(configObject.commandLineArg)
 
           for (const arg in parsedArgs) {
@@ -211,7 +221,7 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
     } else if (source === 'environment variable' || source.name === 'envVar') {
       // handle environment variables
       if (configObject.envVar !== undefined) {
-        if (isStringArray(configObject.envVar)) {
+        if (isNameList(configObject.envVar)) {
           for (const envVar of configObject.envVar) {
             if (Object.hasOwn(process.env, envVar)) {
               value = process.env[envVar]
@@ -259,9 +269,9 @@ function checkConfig (path, configObject, commandLineArgs, sources) {
  * @return {(string|number|boolean)} - the config entry with the correct type
  */
 function typeCastEntry (entryString) {
-  if (entryString.match(/^\d+$/)) {
-    // Number
-    return parseInt(entryString)
+  if (entryString.match(/^-?\d+(\.\d+)?$/)) {
+    // Number, including negatives and decimals
+    return Number(entryString)
   } else if (['true', 'false'].includes(entryString.toLowerCase())) {
     // Boolean
     return entryString.toLowerCase() === 'true'
@@ -282,7 +292,7 @@ function typeCastEntry (entryString) {
 function checkEnum (path, configResult, configObject) {
   if (!configObject.values.includes(configResult)) {
     if (configObject.default !== undefined) {
-      logger.warn('Waring: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default)
+      logger.warn('Warning: Trying to set config.' + path + ' and found invalid enum value. Setting to default: ' + configObject.default)
       logger.warn('Accepted values are: ' + configObject.values.join(', '))
       configResult = configObject.default
     } else {
@@ -296,6 +306,116 @@ function checkEnum (path, configResult, configObject) {
 }
 
 /**
+ * Find configs supplied by custom source objects that the schema does not define
+ * Built-in sources are skipped: command line args and environment variables include values that have nothing to do with the schema, so an unrecognized one there is not evidence of a typo
+ * @function findUnknownConfigs
+ * @param {Object} schema - the config schema
+ * @param {Array} sources - list of sources to check from
+ * @return {Array} - list of {path, suggestions} objects, one per unrecognized config
+ */
+function findUnknownConfigs (schema, sources) {
+  const unknownConfigs = []
+  const seen = new Set()
+
+  for (const source of sources) {
+    // skip the built-in sources, including the object form that merely names one
+    if (typeof source !== 'object' || source === null || Array.isArray(source)) continue
+    if (source.name === 'commandLineArg' || source.name === 'envVar') continue
+
+    walkSource('', schema, source, unknownConfigs, seen)
+  }
+
+  return unknownConfigs
+}
+
+/**
+ * Recursive function to walk a custom source object alongside the schema looking for configs the schema does not define
+ * @function walkSource
+ * @param {string} path - current path of the object being walked delimited by a period
+ * @param {Object} schemaObject - current level of the schema
+ * @param {Object} sourceObject - current level of the source object
+ * @param {Array} unknownConfigs - list the unrecognized configs are collected into
+ * @param {Set} seen - paths already collected, so a config supplied by several sources is only reported once
+ */
+function walkSource (path, schemaObject, sourceObject, unknownConfigs, seen) {
+  for (const key in sourceObject) {
+    // an undefined value sets nothing, so it is not worth mentioning
+    if (sourceObject[key] === undefined) continue
+
+    const newPath = path === '' ? key : path + '.' + key
+
+    if (!Object.hasOwn(schemaObject, key)) {
+      if (seen.has(newPath)) continue
+      seen.add(newPath)
+      unknownConfigs.push({ path: newPath, suggestions: suggestConfigs(key, Object.keys(schemaObject)) })
+      continue
+    }
+
+    const schemaEntry = schemaObject[key]
+
+    // user-defined functions and primitives have no keys of their own to compare against
+    // that includes primitives whose default is an object: those are pass-through values the schema does not enumerate, so anything inside one is valid
+    if (typeof schemaEntry !== 'object' || schemaEntry === null || isPrimitive(schemaEntry)) continue
+
+    if (typeof sourceObject[key] === 'object' && sourceObject[key] !== null && !Array.isArray(sourceObject[key])) {
+      walkSource(newPath, schemaEntry, sourceObject[key], unknownConfigs, seen)
+    }
+  }
+}
+
+/**
+ * Find the configs a misspelling most likely meant
+ * @function suggestConfigs
+ * @param {string} name - the unrecognized config name
+ * @param {Array} candidates - the config names the schema defines at that level
+ * @return {Array} - up to 3 candidates, closest first
+ */
+function suggestConfigs (name, candidates) {
+  return candidates
+    .map(candidate => {
+      return { candidate, distance: levenshteinDistance(name.toLowerCase(), candidate.toLowerCase()) }
+    })
+    // the longer the words, the more typos they can absorb before the resemblance is a coincidence
+    .filter(({ candidate, distance }) => distance <= Math.max(1, Math.floor(Math.max(name.length, candidate.length) / 3)))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 3)
+    .map(({ candidate }) => candidate)
+}
+
+/**
+ * Calculate the Levenshtein distance between two strings: how many single character insertions, deletions, or substitutions it takes to turn one into the other
+ * @function levenshteinDistance
+ * @param {string} a - first string
+ * @param {string} b - second string
+ * @return {number} - the edit distance between the two strings
+ */
+function levenshteinDistance (a, b) {
+  if (a === b) return 0
+
+  // only the previous row of the distance matrix is needed to calculate the next one, so just those two rows are kept
+  let previousRow = []
+  let currentRow = []
+  for (let i = 0; i <= b.length; i++) previousRow[i] = i
+
+  for (let i = 1; i <= a.length; i++) {
+    currentRow[0] = i
+    for (let j = 1; j <= b.length; j++) {
+      const substitutionCost = a[i - 1] === b[j - 1] ? 0 : 1
+      currentRow[j] = Math.min(
+        previousRow[j] + 1, // deletion
+        currentRow[j - 1] + 1, // insertion
+        previousRow[j - 1] + substitutionCost // substitution
+      )
+    }
+    const swap = previousRow
+    previousRow = currentRow
+    currentRow = swap
+  }
+
+  return previousRow[b.length]
+}
+
+/**
  * Check if a configObject is a primitive
  * All primitives have a .default property so it will fail if that property is undefined
  * @function isPrimitive
@@ -304,22 +424,25 @@ function checkEnum (path, configResult, configObject) {
  */
 function isPrimitive (configObject) {
   return typeof configObject.description !== 'object' && // If description is not a string it is another configured config item and not a primitive, return false
+    typeof configObject.desc !== 'object' && // same goes for desc, the alias of description
     (Object.keys(configObject).length === 0 ||
     configObject.default !== undefined ||
     configObject.commandLineArg !== undefined ||
     configObject.description !== undefined ||
+    configObject.desc !== undefined ||
     configObject.values !== undefined ||
     configObject.envVar !== undefined)
 }
 
 /**
- * Check if the configResult is a string array
- * @function isStringArray
- * @param {*} configResult - outputted config string
- * @return {boolean} - boolean result of it is a string array
+ * Check if a schema's commandLineArg or envVar lists several names rather than naming one
+ * Only the first entry is examined, which is enough for a list the schema's author wrote by hand
+ * @function isNameList
+ * @param {*} schemaValue - the commandLineArg or envVar a schema supplied
+ * @return {boolean} - boolean result of if it is a list of names
  */
-function isStringArray (configResult) {
-  return Array.isArray(configResult) && (typeof configResult[0]) === 'string'
+function isNameList (schemaValue) {
+  return Array.isArray(schemaValue) && (typeof schemaValue[0]) === 'string'
 }
 
 module.exports = sourceConfigs
