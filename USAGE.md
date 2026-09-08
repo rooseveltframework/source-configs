@@ -44,7 +44,7 @@ console.log(config.websocket.port)
 
 Schemas support the following metadata for each configurable property in order to create constraints if desired or add additional functionality:
 
-- `description` *[String]*: Describe what this config will be used for.
+- `description` *[String]*: Describe what this config will be used for. Also printed by `printHelp`. Can also be spelled `desc`, which takes effect when `description` is unset.
 - `default` *[any]*: Set a default value for this config. If not set, the default will be set to the config's name.
 - `values` *[Array]*: Enumerated list of values that are valid. If not set, any value will be valid.
 - `commandLineArg` *[String or Array of Strings]*: Command line argument(s) to listen for that will set this config. If not set, source-configs will not listen for command line arguments to set the value for this config.

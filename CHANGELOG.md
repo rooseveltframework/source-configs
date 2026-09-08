@@ -1,3 +1,16 @@
+## 2.0.0
+
+- Breaking: Moved the `commandLineArgs`, `yargsParser`, `printHelp`, and `safelyPrintSchema` properties off of the source-configs module and onto the config that source-configs returns, along with the new `unknownConfigs` property. The `configs` property is gone entirely, since the config is what source-configs returns. Hanging these off the module meant that when more than one library sourced configs in the same process, whichever sourced last overwrote what the others left there.
+- Breaking: Dropped support for Node 22.0 through 22.4. Node 22.5 or later is now required.
+- Added detection of misspelled configs: when a custom source object supplies a config the schema doesn't define, source-configs now warns and suggests the configs it most closely resembles. Can be disabled with the new `suggestions` config. The findings are also exposed via the new `unknownConfigs` property.
+- Fixed a bug that caused the config returned by a `transform` function to be discarded when the function returned a new object instead of mutating the one it was given.
+- Fixed a bug that caused a crash when a custom config source set a config along the path to a deeper one to `null`.
+- Fixed a bug that prevented `printHelp` from printing a config's `description`. Previously only the undocumented `desc` spelling was printed. Both now work, with `description` taking precedence.
+- Fixed a bug that prevented negative numbers and decimals from being typecast, e.g. `-3` and `1.5` were left as strings.
+- Fixed a bug that prevented the strings in an array from being typecast unless every entry in the array was a string.
+- Fixed a typo in the warning printed when an enum is set to an invalid value.
+- Updated dependencies.
+
 ## 1.0.2
 
 - Issued an additional fix for the previous bug that prevented environment variables from being set to empty strings, which should be considered valid, truthy values. Previously there were still scenarios where they were erroneously considered invalid, falsey values.

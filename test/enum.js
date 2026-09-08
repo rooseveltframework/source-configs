@@ -1,6 +1,7 @@
-/* eslint-env mocha */
-const assert = require('assert')
+const { describe, it, before, after } = require('node:test')
+const assert = require('node:assert')
 const processArgv = process.argv.slice()
+
 let sourceConfig
 let schema
 
@@ -8,36 +9,36 @@ describe('Enums', () => {
   before(() => {
     sourceConfig = require('../source-configs')
     schema = require('./schema.json')
-    sourceConfig.configs = {}
+  })
+
+  after(() => {
+    process.argv = processArgv
   })
 
   it('should pass with a valid enum', () => {
     process.argv.push('--http-method')
     process.argv.push('http')
 
-    sourceConfig(schema)
-    assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
+    assert.deepStrictEqual(sourceConfig(schema).httpMethod, 'http')
 
-    process.argv = processArgv
+    process.argv = processArgv.slice()
   })
 
   it('should use fallback with invalid enum', () => {
     process.argv.push('--http-method')
     process.argv.push('httpz')
 
-    sourceConfig(schema)
-    assert.deepStrictEqual(sourceConfig.configs.httpMethod, 'http')
+    assert.deepStrictEqual(sourceConfig(schema).httpMethod, 'http')
 
-    process.argv = processArgv
+    process.argv = processArgv.slice()
   })
 
   it('should use passed arg with invalid enum and no default', () => {
     process.argv.push('--no-default')
     process.argv.push('sometimes')
 
-    sourceConfig(schema)
-    assert.deepStrictEqual(sourceConfig.configs.enumWithoutDefault, null)
+    assert.deepStrictEqual(sourceConfig(schema).enumWithoutDefault, null)
 
-    process.argv = processArgv
+    process.argv = processArgv.slice()
   })
 })

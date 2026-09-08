@@ -1,19 +1,10 @@
-/* eslint-env mocha */
-const assert = require('assert')
-
-let sourceConfig
-let schema
+const { describe, it } = require('node:test')
+const assert = require('node:assert')
 
 describe('string with no default value', () => {
-  before(function () {
-    sourceConfig = require('../source-configs')
-    sourceConfig.configs = {}
-    schema = require('./schema.json')
-
-    sourceConfig(schema)
-  })
-
   it('should correctly populate string with no default value', function () {
-    assert.deepStrictEqual(sourceConfig.configs.stringWithoutDefault, 'stringWithoutDefault')
+    const config = require('../source-configs')(require('./schema.json'))
+
+    assert.deepStrictEqual(config.stringWithoutDefault, 'stringWithoutDefault')
   })
 })

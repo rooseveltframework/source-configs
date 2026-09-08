@@ -1,20 +1,11 @@
-/* eslint-env mocha */
-const assert = require('assert')
-
-let sourceConfig
-let schema
+const { describe, it } = require('node:test')
+const assert = require('node:assert')
 
 describe('print config schema', () => {
-  before(function () {
-    sourceConfig = require('../source-configs')
-    sourceConfig.configs = {}
-    schema = require('./schema.json')
-
-    sourceConfig(schema)
-  })
-
   it('should safely print config schema', function () {
-    const safeSchema = JSON.stringify(sourceConfig.safelyPrintSchema())
+    const config = require('../source-configs')(require('./schema.json'))
+
+    const safeSchema = JSON.stringify(config.safelyPrintSchema())
     assert.deepStrictEqual(safeSchema.includes('"sensitiveInfo":"********"'), true)
   })
 })
