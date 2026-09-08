@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Implemented a better fix for the bug that caused the config returned by a `transform` function to be discarded, so a transform that builds a new config now works as well as one that mutates the config it was given. A transform that returns nothing continues to work as before.
+
 ## 2.0.0
 
 - Breaking: Moved the `commandLineArgs`, `yargsParser`, `printHelp`, and `safelyPrintSchema` properties off of the source-configs module and onto the config that source-configs returns, along with the new `unknownConfigs` property. The `configs` property is gone entirely, since the config is what source-configs returns. Hanging these off the module meant that when more than one library sourced configs in the same process, whichever sourced last overwrote what the others left there.
