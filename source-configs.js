@@ -40,9 +40,11 @@ function sourceConfigs (schema, config) {
   }
 
   // run transformation on config if function is in use
-  // the transform's return value replaces the config, so a transform that builds a new object works as well as one that mutates the object it was given
   if (config.transform && typeof config.transform === 'function') {
-    configs = config.transform(configs, commandLineArgs)
+    const transformed = config.transform(configs, commandLineArgs)
+    if (transformed !== undefined) {
+      configs = transformed
+    }
   }
 
   const printHelp = function () {

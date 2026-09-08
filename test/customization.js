@@ -30,6 +30,17 @@ describe('custom configuration', function () {
     assert.strictEqual(config.apiRoute, '/api/c')
   })
 
+  it('should keep the config a transform function mutated when it returns nothing', () => {
+    const config = sourceConfig(schema, {
+      logging: false,
+      transform: params => {
+        params.apiRoute = '/api/mutated'
+        // deliberately returns nothing, which is how a transform that only mutates gets written
+      }
+    })
+    assert.strictEqual(config.apiRoute, '/api/mutated')
+  })
+
   it('should use the config a transform function returns, even when it is a new object', () => {
     const config = sourceConfig(schema, {
       logging: false,
